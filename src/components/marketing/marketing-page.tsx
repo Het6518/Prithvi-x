@@ -70,10 +70,7 @@ const pricing = [
    PART 1 — CINEMATIC SPLASH SCREEN (4-5s, Earth animation)
    ============================================================ */
 function SplashScreen() {
-  const [visible, setVisible] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return !window.localStorage.getItem("prithvix-splash");
-  });
+  const [visible, setVisible] = useState(true);
 
   if (!visible) return null;
 
@@ -144,10 +141,7 @@ function SplashScreen() {
             Rooted In Growth
           </h1>
           <button
-            onClick={() => {
-              window.localStorage.setItem("prithvix-splash", "1");
-              setVisible(false);
-            }}
+            onClick={() => setVisible(false)}
             className="mt-8 border-3 border-white/20 bg-white/10 px-8 py-3 text-sm font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-white/20 hover:border-white/40"
             style={{ borderRadius: "6px" }}
           >
