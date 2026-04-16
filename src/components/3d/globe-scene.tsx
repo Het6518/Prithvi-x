@@ -2,7 +2,7 @@
 
 import { useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, OrbitControls, Sphere, Stars } from "@react-three/drei";
+import { Float, OrbitControls, Sphere, Stars, Text } from "@react-three/drei";
 import * as THREE from "three";
 
 function GlobeMesh() {
@@ -47,20 +47,49 @@ function GlobeMesh() {
   );
 }
 
+function AlwaysVisibleText() {
+  const textRef = useRef<THREE.Mesh>(null);
+  
+  useFrame(({ camera }) => {
+    if (!textRef.current) return;
+    // Calculate direction from center (0,0,0) to camera
+    const dir = camera.position.clone().normalize();
+    // Position the text 1.4 units outward from the globe center toward the camera
+    textRef.current.position.copy(dir.multiplyScalar(1.4));
+    // Make the text face exactly the same way the camera is looking
+    textRef.current.quaternion.copy(camera.quaternion);
+  });
+
+  return (
+    <Text
+      ref={textRef as any}
+      fontSize={0.34}
+      color="#D4A853"
+      letterSpacing={0.2}
+      font="https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2"
+      outlineWidth={0.015}
+      outlineColor="#0E1A14"
+    >
+      PRITHVIX
+    </Text>
+  );
+}
+
 export function GlobeScene() {
   return (
     <div className="relative flex h-full min-h-[320px] w-full overflow-hidden rounded-[2rem] border border-white/35 bg-[radial-gradient(circle_at_top,rgba(212,168,83,0.12),transparent_28%),linear-gradient(145deg,rgba(14,26,20,1),rgba(21,47,35,0.95))] shadow-ambient">
-      {/* Absolute inset wrapper to force canvas to take full explicit height of the min-h container */}
       <div className="absolute inset-0">
         <Canvas camera={{ position: [0, 0, 3.6], fov: 42 }}>
-          {/* Removed solid background color to allow the neo-brutalist CSS gradient to show through */}
           <ambientLight intensity={0.8} color="#dff5e5" />
           <directionalLight position={[2, 3, 2]} intensity={1.2} color="#9cc79c" />
           <pointLight position={[-2, -1, 3]} intensity={2.2} color="#D4A853" />
           <Stars radius={60} depth={40} count={1500} factor={2.8} saturation={0} fade speed={0.65} />
+          
           <Float speed={1.1} rotationIntensity={0.24} floatIntensity={0.4}>
             <GlobeMesh />
+            <AlwaysVisibleText />
           </Float>
+          
           <OrbitControls enablePan={false} enableZoom={false} autoRotate autoRotateSpeed={0.45} />
         </Canvas>
       </div>
