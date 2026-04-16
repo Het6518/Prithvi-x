@@ -4,10 +4,16 @@ type GeminiMessage = {
 };
 
 const SYSTEM_PROMPT = `You are an expert agricultural advisor helping Indian farmers with practical and localized advice.
+You provide simple, action-oriented guidance that field teams can immediately apply.
+Keep responses clear, safe, and easy to understand. Use local Indian agricultural context.
 When asked in a specific language, respond in that language.`;
 
 const MAX_RETRIES = 3;
-const BASE_DELAY_MS = 1500;
+const BASE_DELAY_MS = 2000;
+const RATE_LIMIT_INTERVAL_MS = 2000; // 1 request per 2 seconds
+
+// Server-side rate limiter — tracks last request timestamp
+let lastRequestTime = 0;
 
 function buildPrompt(messages: GeminiMessage[], language: string) {
   const prompt = [
@@ -42,6 +48,19 @@ function getFallbackResponse(language: string): string {
   );
 }
 
+async function enforceRateLimit() {
+  const now = Date.now();
+  const elapsed = now - lastRequestTime;
+
+  if (elapsed < RATE_LIMIT_INTERVAL_MS) {
+    const waitTime = RATE_LIMIT_INTERVAL_MS - elapsed;
+    console.log(`[Gemini] Rate limiter: waiting ${waitTime}ms before next request`);
+    await sleep(waitTime);
+  }
+
+  lastRequestTime = Date.now();
+}
+
 export async function askGemini(messages: GeminiMessage[], language: string) {
   const apiKey = process.env.GEMINI_API_KEY;
 
@@ -49,10 +68,16 @@ export async function askGemini(messages: GeminiMessage[], language: string) {
     return getFallbackResponse(language);
   }
 
+  // Enforce server-side rate limit: max 1 request per 2 seconds
+  await enforceRateLimit();
+
   let lastError: Error | null = null;
 
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 15000); // 15s timeout
+
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`,
         {
@@ -71,23 +96,31 @@ export async function askGemini(messages: GeminiMessage[], language: string) {
                 ]
               }
             ]
-          })
+          }),
+          signal: controller.signal
         }
       );
 
-      // Handle rate limiting with retry
+      clearTimeout(timeout);
+
+      // Handle rate limiting with exponential backoff retry
       if (response.status === 429) {
         const delay = BASE_DELAY_MS * Math.pow(2, attempt);
         console.warn(`[Gemini] Rate limited (429). Retry ${attempt + 1}/${MAX_RETRIES} after ${delay}ms...`);
-        lastError = new Error("Rate limited by Gemini API");
+        lastError = new Error("The AI advisor is busy. Please wait a moment and try again.");
         await sleep(delay);
         continue;
+      }
+
+      if (response.status === 403) {
+        console.error("[Gemini] API key invalid or quota exhausted (403).");
+        return getFallbackResponse(language);
       }
 
       if (!response.ok) {
         const errorBody = await response.text().catch(() => "Unknown error");
         console.error("[Gemini] API error:", response.status, errorBody);
-        throw new Error(`Gemini API returned status ${response.status}`);
+        throw new Error("Unable to reach AI advisor. Please try again shortly.");
       }
 
       const data = await response.json();
@@ -105,13 +138,15 @@ export async function askGemini(messages: GeminiMessage[], language: string) {
 
       return text;
     } catch (error) {
-      // If it's a rate limit retry, we already set lastError above
-      if (lastError?.message === "Rate limited by Gemini API" && attempt < MAX_RETRIES - 1) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        console.warn("[Gemini] Request timed out.");
+        lastError = new Error("Request timed out. Please try again.");
+      } else if (lastError?.message?.includes("busy") && attempt < MAX_RETRIES - 1) {
         continue;
+      } else {
+        console.error("[Gemini] Request failed:", error);
+        lastError = error instanceof Error ? error : new Error("Unknown error");
       }
-
-      console.error("[Gemini] Request failed:", error);
-      lastError = error instanceof Error ? error : new Error("Unknown error");
     }
   }
 

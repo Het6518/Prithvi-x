@@ -107,14 +107,14 @@ function SplashScreen() {
             style={{ width: 520, height: 520, border: "2px solid rgba(212,168,83,0.15)" }}
             initial={{ opacity: 0, scale: 0.6 }}
             animate={{ opacity: 0.4, scale: 1.1 }}
-            transition={{ duration: 3, ease: "easeOut" }}
+            transition={{ duration: 4, ease: "easeOut" }}
           />
           <motion.div
             className="absolute rounded-full"
             style={{ width: 680, height: 680, border: "1px solid rgba(255,255,255,0.06)" }}
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 0.2, scale: 1.3 }}
-            transition={{ duration: 3.5, ease: "easeOut" }}
+            transition={{ duration: 4.5, ease: "easeOut" }}
           />
 
           <div className="relative z-10 flex w-full max-w-xl flex-col items-center px-6">
@@ -129,14 +129,14 @@ function SplashScreen() {
               }}
               initial={{ opacity: 0, scale: 0.6, rotate: -10 }}
               animate={{ opacity: 1, scale: 1.2, rotate: 10 }}
-              transition={{ duration: 4, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 5, ease: [0.16, 1, 0.3, 1] }}
             >
               <motion.img
                 src="/earth.png"
                 alt="Planet Earth from space"
                 className="h-full w-full object-cover"
                 animate={{ scale: [1, 1.08, 1], rotate: [0, 4, 0] }}
-                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
               />
               {/* Gold atmosphere glow */}
               <div className="absolute inset-0 rounded-full" style={{
