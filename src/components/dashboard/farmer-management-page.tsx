@@ -47,6 +47,7 @@ export function FarmerManagementPage() {
   const [tier, setTier] = useState("All");
   const [selectedId, setSelectedId] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState<FarmerFormState>(emptyForm);
   const isDealer = sessionQuery.data.user.role === "DEALER";
@@ -76,20 +77,6 @@ export function FarmerManagementPage() {
 
   const selectedFarmer =
     filteredFarmers.find((farmer) => farmer.id === selectedId) || filteredFarmers[0] || null;
-
-  useEffect(() => {
-    if (selectedFarmer) {
-      setForm({
-        name: selectedFarmer.name,
-        village: selectedFarmer.village,
-        mobile: selectedFarmer.mobile,
-        cropType: selectedFarmer.cropType,
-        loyaltyTier: selectedFarmer.loyaltyTier,
-        totalVisits: selectedFarmer.totalVisits,
-        outstandingAmount: selectedFarmer.outstandingAmount
-      });
-    }
-  }, [selectedFarmer]);
 
   async function saveFarmer(create = false) {
     setSaving(true);
@@ -169,8 +156,8 @@ export function FarmerManagementPage() {
               <Button
                 onClick={() => {
                   setForm(emptyForm);
+                  setIsAdding(true);
                   setDrawerOpen(true);
-                  setSelectedId("");
                 }}
               >
                 <Plus className="mr-2 h-4 w-4" /> Add farmer
@@ -229,7 +216,19 @@ export function FarmerManagementPage() {
             </div>
             {isDealer ? (
               <button
-                onClick={() => setDrawerOpen(true)}
+                onClick={() => {
+                  setForm({
+                    name: selectedFarmer.name,
+                    village: selectedFarmer.village,
+                    mobile: selectedFarmer.mobile,
+                    cropType: selectedFarmer.cropType,
+                    loyaltyTier: selectedFarmer.loyaltyTier,
+                    totalVisits: selectedFarmer.totalVisits,
+                    outstandingAmount: selectedFarmer.outstandingAmount
+                  });
+                  setIsAdding(false);
+                  setDrawerOpen(true);
+                }}
                 className="rounded-full bg-forest/5 p-2 text-forest/60 transition hover:bg-forest/10"
               >
                 <PencilLine className="h-4 w-4" />
@@ -265,10 +264,10 @@ export function FarmerManagementPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm uppercase tracking-[0.22em] text-gold">
-                  {selectedId ? "Edit farmer" : "Add farmer"}
+                  {isAdding ? "Add farmer" : "Edit farmer"}
                 </p>
                 <h3 className="mt-2 text-3xl font-semibold text-forest">
-                  {selectedId ? selectedFarmer?.name : "New farmer profile"}
+                  {isAdding ? "New farmer profile" : selectedFarmer?.name}
                 </h3>
               </div>
               <button onClick={() => setDrawerOpen(false)} className="rounded-full bg-forest/5 p-2 text-forest/60">
@@ -340,8 +339,8 @@ export function FarmerManagementPage() {
               </div>
             </div>
             <div className="mt-6 flex gap-3">
-              <Button className="flex-1" onClick={() => saveFarmer(!selectedId)} disabled={saving}>
-                {saving ? "Saving..." : selectedId ? "Save Changes" : "Create Farmer"}
+              <Button className="flex-1" onClick={() => saveFarmer(isAdding)} disabled={saving}>
+                {saving ? "Saving..." : isAdding ? "Create Farmer" : "Save Changes"}
               </Button>
               <Button variant="secondary" className="flex-1" onClick={() => setDrawerOpen(false)}>
                 Cancel
