@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PencilLine, Plus, Search, X } from "lucide-react";
 import { Button } from "@/components/shared/button";
 import { LoadingPanel } from "@/components/shared/loading-panel";
@@ -50,6 +50,7 @@ export function FarmerManagementPage() {
   const [isAdding, setIsAdding] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState<FarmerFormState>(emptyForm);
+  const [formError, setFormError] = useState("");
   const isDealer = sessionQuery.data.user.role === "DEALER";
 
   const farmers = farmersQuery.data.farmers;
@@ -80,6 +81,7 @@ export function FarmerManagementPage() {
 
   async function saveFarmer(create = false) {
     setSaving(true);
+    setFormError("");
     try {
       const response = await fetch(create ? "/api/farmers" : `/api/farmers/${selectedFarmer?.id}`, {
         method: create ? "POST" : "PATCH",
@@ -98,7 +100,7 @@ export function FarmerManagementPage() {
       }
       setDrawerOpen(false);
     } catch (error) {
-      window.alert(error instanceof Error ? error.message : "Unable to save farmer.");
+      setFormError(error instanceof Error ? error.message : "Unable to save farmer.");
     } finally {
       setSaving(false);
     }
@@ -109,35 +111,32 @@ export function FarmerManagementPage() {
   }
 
   if (farmersQuery.error || sessionQuery.error) {
-    return (
-      <div className="glass-panel rounded-[2rem] p-6 text-sm text-rose-700 shadow-sm">
-        {farmersQuery.error || sessionQuery.error}
-      </div>
-    );
+    return <div className="neo-error">{farmersQuery.error || sessionQuery.error}</div>;
   }
 
   return (
     <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
-      <div className="glass-panel rounded-[2rem] p-6 shadow-sm">
+      <div className="neo-card p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-[0.22em] text-gold">Farmer management</p>
-            <h2 className="mt-2 text-3xl font-semibold text-forest">Profiles, filters, and loyalty context</h2>
+            <p className="neo-eyebrow">Farmer management</p>
+            <h2 className="mt-2 text-3xl font-bold text-forest">Profiles, filters, and loyalty context</h2>
           </div>
           <div className="flex flex-wrap gap-3">
-            <div className="flex items-center gap-2 rounded-full border border-forest/10 bg-white/70 px-4 py-2">
+            <div className="flex items-center gap-2 border-3 border-black bg-white px-4 py-2 shadow-neo-sm" style={{ borderRadius: "6px" }}>
               <Search className="h-4 w-4 text-forest/45" />
               <input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                className="bg-transparent text-sm outline-none"
+                className="bg-transparent text-sm font-medium outline-none"
                 placeholder="Search farmer"
               />
             </div>
             <select
               value={tier}
               onChange={(event) => setTier(event.target.value)}
-              className="rounded-full border border-forest/10 bg-white/70 px-4 py-2 text-sm outline-none"
+              className="neo-select"
+              style={{ width: "auto" }}
             >
               {["All", "BRONZE", "SILVER", "GOLD"].map((item) => (
                 <option key={item}>{item}</option>
@@ -146,7 +145,8 @@ export function FarmerManagementPage() {
             <select
               value={credit}
               onChange={(event) => setCredit(event.target.value)}
-              className="rounded-full border border-forest/10 bg-white/70 px-4 py-2 text-sm outline-none"
+              className="neo-select"
+              style={{ width: "auto" }}
             >
               {["All", "CLEAR", "DUE", "OVERDUE"].map((item) => (
                 <option key={item}>{item}</option>
@@ -157,6 +157,7 @@ export function FarmerManagementPage() {
                 onClick={() => {
                   setForm(emptyForm);
                   setIsAdding(true);
+                  setFormError("");
                   setDrawerOpen(true);
                 }}
               >
@@ -165,54 +166,63 @@ export function FarmerManagementPage() {
             ) : null}
           </div>
         </div>
-        <div className="mt-6 overflow-hidden rounded-[1.6rem] border border-forest/10">
-          <table className="min-w-full divide-y divide-forest/10 text-left">
-            <thead className="bg-forest text-sm text-background">
-              <tr>
-                <th className="px-4 py-4 font-medium">Farmer</th>
-                <th className="px-4 py-4 font-medium">Village</th>
-                <th className="px-4 py-4 font-medium">Crop</th>
-                <th className="px-4 py-4 font-medium">Tier</th>
-                <th className="px-4 py-4 font-medium">Outstanding</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-forest/10 bg-white/75">
-              {filteredFarmers.map((farmer) => (
-                <tr
-                  key={farmer.id}
-                  onClick={() => setSelectedId(farmer.id)}
-                  className="cursor-pointer transition hover:bg-gold/10"
-                >
-                  <td className="px-4 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-forest text-sm font-semibold text-background">
-                        {initials(farmer.name)}
-                      </div>
-                      <div>
-                        <p className="font-semibold text-forest">{farmer.name}</p>
-                        <p className="text-sm text-forest/55">{farmer.mobile}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 text-forest/75">{farmer.village}</td>
-                  <td className="px-4 py-4 text-forest/75">{farmer.cropType}</td>
-                  <td className="px-4 py-4">
-                    <StatusPill value={farmer.loyaltyTier} />
-                  </td>
-                  <td className="px-4 py-4 font-semibold text-forest">{formatCurrency(farmer.outstandingAmount)}</td>
+
+        {filteredFarmers.length === 0 ? (
+          <div className="neo-empty mt-6">
+            {farmers.length === 0
+              ? "No farmers registered yet. Add your first farmer to get started."
+              : "No farmers match your current filters. Try adjusting your search."}
+          </div>
+        ) : (
+          <div className="mt-6 overflow-hidden">
+            <table className="neo-table">
+              <thead>
+                <tr>
+                  <th>Farmer</th>
+                  <th>Village</th>
+                  <th>Crop</th>
+                  <th>Tier</th>
+                  <th>Outstanding</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {filteredFarmers.map((farmer) => (
+                  <tr
+                    key={farmer.id}
+                    onClick={() => setSelectedId(farmer.id)}
+                    className={`cursor-pointer ${selectedId === farmer.id ? "!bg-gold/20" : ""}`}
+                  >
+                    <td>
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center border-2 border-black bg-forest text-sm font-bold text-background" style={{ borderRadius: "4px" }}>
+                          {initials(farmer.name)}
+                        </div>
+                        <div>
+                          <p className="font-bold text-forest">{farmer.name}</p>
+                          <p className="text-sm text-forest/55">{farmer.mobile}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="text-forest/75">{farmer.village}</td>
+                    <td className="text-forest/75">{farmer.cropType}</td>
+                    <td>
+                      <StatusPill value={farmer.loyaltyTier} />
+                    </td>
+                    <td className="font-bold text-forest">{formatCurrency(farmer.outstandingAmount)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {selectedFarmer ? (
-        <aside className="glass-panel rounded-[2rem] p-6 shadow-sm">
+        <aside className="neo-card p-6">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.22em] text-gold">Farmer details</p>
-              <h3 className="mt-2 text-2xl font-semibold text-forest">{selectedFarmer.name}</h3>
+              <p className="neo-eyebrow">Farmer details</p>
+              <h3 className="mt-2 text-2xl font-bold text-forest">{selectedFarmer.name}</h3>
             </div>
             {isDealer ? (
               <button
@@ -227,9 +237,10 @@ export function FarmerManagementPage() {
                     outstandingAmount: selectedFarmer.outstandingAmount
                   });
                   setIsAdding(false);
+                  setFormError("");
                   setDrawerOpen(true);
                 }}
-                className="rounded-full bg-forest/5 p-2 text-forest/60 transition hover:bg-forest/10"
+                className="border-2 border-black bg-white p-2 text-forest/60 transition-all hover:shadow-neo-sm hover:translate-x-0.5"
               >
                 <PencilLine className="h-4 w-4" />
               </button>
@@ -244,14 +255,14 @@ export function FarmerManagementPage() {
               ["Created", formatDate(selectedFarmer.createdAt)],
               ["Outstanding", formatCurrency(selectedFarmer.outstandingAmount)]
             ].map(([label, value]) => (
-              <div key={label} className="rounded-[1.3rem] bg-white/70 p-4">
-                <p className="text-sm text-forest/50">{label}</p>
-                <p className="mt-2 font-semibold text-forest">{value}</p>
+              <div key={label} className="border-2 border-black/20 bg-white p-4" style={{ borderRadius: "6px" }}>
+                <p className="text-xs font-bold uppercase tracking-wider text-forest/50">{label}</p>
+                <p className="mt-2 font-bold text-forest">{value}</p>
               </div>
             ))}
-            <div className="rounded-[1.3rem] bg-forest p-5 text-background">
-              <p className="text-sm uppercase tracking-[0.2em] text-background/60">Credit status</p>
-              <p className="mt-3 text-2xl font-semibold">{selectedFarmer.creditStatus}</p>
+            <div className="neo-card-dark p-5">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold">Credit status</p>
+              <p className="mt-3 text-2xl font-bold">{selectedFarmer.creditStatus}</p>
               <p className="mt-2 text-sm text-background/70">Loyalty tier: {selectedFarmer.loyaltyTier}</p>
             </div>
           </div>
@@ -259,18 +270,18 @@ export function FarmerManagementPage() {
       ) : null}
 
       {drawerOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/45 px-4">
-          <div className="w-full max-w-2xl rounded-[2rem] bg-background p-6 shadow-ambient">
+        <div className="neo-overlay">
+          <div className="neo-modal max-w-2xl">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm uppercase tracking-[0.22em] text-gold">
+                <p className="neo-eyebrow">
                   {isAdding ? "Add farmer" : "Edit farmer"}
                 </p>
-                <h3 className="mt-2 text-3xl font-semibold text-forest">
+                <h3 className="mt-2 text-3xl font-bold text-forest">
                   {isAdding ? "New farmer profile" : selectedFarmer?.name}
                 </h3>
               </div>
-              <button onClick={() => setDrawerOpen(false)} className="rounded-full bg-forest/5 p-2 text-forest/60">
+              <button onClick={() => setDrawerOpen(false)} className="border-2 border-black bg-white p-2 text-forest/60 hover:shadow-neo-sm">
                 <X className="h-4 w-4" />
               </button>
             </div>
@@ -284,25 +295,25 @@ export function FarmerManagementPage() {
                 ] as const
               ).map(([key, label]) => (
                 <div key={key}>
-                  <label htmlFor={`farmer-${key}`} className="mb-2 block text-sm font-medium text-forest/70">{label}</label>
+                  <label htmlFor={`farmer-${key}`} className="neo-label">{label}</label>
                   <input
                     id={`farmer-${key}`}
                     value={form[key]}
                     onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value }))}
                     placeholder={`Enter ${label.toLowerCase()}`}
-                    className="w-full rounded-2xl border border-forest/10 bg-white/80 px-4 py-3 outline-none"
+                    className="neo-input"
                   />
                 </div>
               ))}
               <div>
-                <label htmlFor="farmer-loyaltyTier" className="mb-2 block text-sm font-medium text-forest/70">Loyalty tier</label>
+                <label htmlFor="farmer-loyaltyTier" className="neo-label">Loyalty tier</label>
                 <select
                   id="farmer-loyaltyTier"
                   value={form.loyaltyTier}
                   onChange={(event) =>
                     setForm((current) => ({ ...current, loyaltyTier: event.target.value as FarmerRecord["loyaltyTier"] }))
                   }
-                  className="w-full rounded-2xl border border-forest/10 bg-white/80 px-4 py-3 outline-none"
+                  className="neo-select"
                 >
                   {["BRONZE", "SILVER", "GOLD"].map((item) => (
                     <option key={item}>{item}</option>
@@ -310,7 +321,7 @@ export function FarmerManagementPage() {
                 </select>
               </div>
               <div>
-                <label htmlFor="farmer-totalVisits" className="mb-2 block text-sm font-medium text-forest/70">Total visits</label>
+                <label htmlFor="farmer-totalVisits" className="neo-label">Total visits</label>
                 <input
                   id="farmer-totalVisits"
                   type="number"
@@ -320,11 +331,11 @@ export function FarmerManagementPage() {
                     setForm((current) => ({ ...current, totalVisits: Number(event.target.value) }))
                   }
                   placeholder="Total visits"
-                  className="w-full rounded-2xl border border-forest/10 bg-white/80 px-4 py-3 outline-none"
+                  className="neo-input"
                 />
               </div>
               <div>
-                <label htmlFor="farmer-outstandingAmount" className="mb-2 block text-sm font-medium text-forest/70">Outstanding amount</label>
+                <label htmlFor="farmer-outstandingAmount" className="neo-label">Outstanding amount</label>
                 <input
                   id="farmer-outstandingAmount"
                   type="number"
@@ -334,10 +345,11 @@ export function FarmerManagementPage() {
                     setForm((current) => ({ ...current, outstandingAmount: Number(event.target.value) }))
                   }
                   placeholder="Outstanding amount"
-                  className="w-full rounded-2xl border border-forest/10 bg-white/80 px-4 py-3 outline-none"
+                  className="neo-input"
                 />
               </div>
             </div>
+            {formError ? <div className="neo-toast">{formError}</div> : null}
             <div className="mt-6 flex gap-3">
               <Button className="flex-1" onClick={() => saveFarmer(isAdding)} disabled={saving}>
                 {saving ? "Saving..." : isAdding ? "Create Farmer" : "Save Changes"}

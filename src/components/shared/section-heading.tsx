@@ -14,7 +14,7 @@ export function SectionHeading({
   return (
     <div className={cn("space-y-4", align === "center" && "mx-auto text-center")}>
       {eyebrow ? (
-        <p className="text-sm font-semibold uppercase tracking-[0.32em] text-gold">{eyebrow}</p>
+        <p className="neo-eyebrow">{eyebrow}</p>
       ) : null}
       <h2 className="section-title">{title}</h2>
       <p className={cn("section-copy", align === "center" && "mx-auto")}>{copy}</p>

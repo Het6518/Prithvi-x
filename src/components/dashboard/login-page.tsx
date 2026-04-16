@@ -60,14 +60,14 @@ export function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(212,168,83,0.18),transparent_22%),linear-gradient(180deg,#F5F0E8,#EFE8DD)]">
+    <main className="min-h-screen bg-background">
       <div className="section-shell grid min-h-screen items-center gap-10 py-10 lg:grid-cols-[0.95fr_1.05fr]">
         <div className="space-y-6">
-          <p className="text-sm uppercase tracking-[0.32em] text-gold">Secure access</p>
+          <p className="neo-eyebrow">Secure access</p>
           <h1 className="font-heading text-5xl leading-tight text-forest sm:text-6xl">
             Create an account, then step straight into the Prithvix control room.
           </h1>
-          <p className="max-w-xl text-lg leading-8 text-forest/70">
+          <p className="max-w-xl text-lg font-medium leading-8 text-forest/70">
             New users can register as dealers or staff, and existing users can log in with the same secure JWT-based flow.
           </p>
           <div className="max-w-lg">
@@ -75,7 +75,7 @@ export function LoginPage() {
           </div>
         </div>
 
-        <div className="glass-panel rounded-[2rem] p-8 shadow-ambient">
+        <div className="neo-card p-8">
           <div className="grid gap-3 sm:grid-cols-2">
             {(["login", "register"] as const).map((item) => (
               <button
@@ -92,9 +92,10 @@ export function LoginPage() {
                     setPassword("");
                   }
                 }}
-                className={`rounded-full px-5 py-3 text-sm font-semibold capitalize ${
-                  authMode === item ? "bg-forest text-background" : "bg-white/75 text-forest"
+                className={`border-3 border-black px-5 py-3 text-sm font-bold uppercase tracking-wider transition-all ${
+                  authMode === item ? "bg-forest text-background shadow-neo" : "bg-white text-forest hover:shadow-neo-sm"
                 }`}
+                style={{ borderRadius: "6px" }}
               >
                 {item === "login" ? "Login" : "Register"}
               </button>
@@ -112,9 +113,10 @@ export function LoginPage() {
                     setPassword("demo1234");
                   }
                 }}
-                className={`rounded-full px-5 py-3 text-sm font-semibold capitalize ${
-                  roleMode === item ? "bg-gold text-ink" : "bg-white/75 text-forest"
+                className={`border-3 border-black px-5 py-3 text-sm font-bold uppercase tracking-wider transition-all ${
+                  roleMode === item ? "bg-gold text-ink shadow-neo" : "bg-white text-forest hover:shadow-neo-sm"
                 }`}
+                style={{ borderRadius: "6px" }}
               >
                 {item}
               </button>
@@ -124,38 +126,38 @@ export function LoginPage() {
           <form onSubmit={handleSubmit} className="mt-8 space-y-5">
             {authMode === "register" ? (
               <div>
-                <label htmlFor="name" className="mb-2 block text-sm font-medium text-forest/70">Full name</label>
+                <label htmlFor="name" className="neo-label">Full name</label>
                 <input
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full rounded-2xl border border-forest/10 bg-white/80 px-4 py-3 outline-none"
+                  className="neo-input"
                   placeholder="Your name"
                 />
               </div>
             ) : null}
             <div>
-              <label htmlFor="identifier" className="mb-2 block text-sm font-medium text-forest/70">Email</label>
+              <label htmlFor="identifier" className="neo-label">Email</label>
               <input
                 id="identifier"
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
-                className="w-full rounded-2xl border border-forest/10 bg-white/80 px-4 py-3 outline-none"
+                className="neo-input"
                 placeholder="name@example.com"
               />
             </div>
             <div>
-              <label htmlFor="password" className="mb-2 block text-sm font-medium text-forest/70">Password</label>
+              <label htmlFor="password" className="neo-label">Password</label>
               <input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-2xl border border-forest/10 bg-white/80 px-4 py-3 outline-none"
+                className="neo-input"
                 placeholder={authMode === "register" ? "Minimum 6 characters" : "Your password"}
               />
             </div>
-            {error ? <p className="text-sm font-medium text-rose-700">{error}</p> : null}
+            {error ? <div className="neo-toast">{error}</div> : null}
             <Button className="w-full" disabled={loading}>
               <span className="inline-flex items-center gap-2">
                 {loading
@@ -169,10 +171,10 @@ export function LoginPage() {
               </span>
             </Button>
           </form>
-          <p className="mt-5 text-sm text-forest/55">
-            Demo login: `dealer@prithvix.com` or `staff@prithvix.com`, password `demo1234`.
-          </p>
-          <Link href="/" className="mt-6 inline-flex text-sm font-semibold text-forest underline-offset-4 hover:underline">
+          <div className="mt-5 border-2 border-black/20 bg-gold/10 p-3 text-sm font-medium text-forest" style={{ borderRadius: "6px" }}>
+            Demo login: <code className="font-bold">dealer@prithvix.com</code> or <code className="font-bold">staff@prithvix.com</code>, password <code className="font-bold">demo1234</code>
+          </div>
+          <Link href="/" className="mt-6 inline-flex text-sm font-bold text-forest underline underline-offset-4 hover:text-gold">
             Return to marketing site
           </Link>
         </div>

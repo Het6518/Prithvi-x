@@ -9,9 +9,9 @@ import { formatCurrency } from "@/lib/utils";
 import type { ProductRecord } from "@/lib/types";
 
 function getStatus(stock: number) {
-  if (stock <= 20) return { label: "Reorder", color: "bg-rose-500" };
-  if (stock <= 40) return { label: "Low", color: "bg-amber-500" };
-  return { label: "Healthy", color: "bg-emerald-500" };
+  if (stock <= 20) return { label: "Reorder", color: "bg-rose-400" };
+  if (stock <= 40) return { label: "Low", color: "bg-amber-400" };
+  return { label: "Healthy", color: "bg-emerald-400" };
 }
 
 const emptyProduct = {
@@ -30,10 +30,12 @@ export function InventoryPage() {
   const [editing, setEditing] = useState<ProductRecord | null>(null);
   const [form, setForm] = useState(emptyProduct);
   const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
   const isDealer = sessionQuery.data.user.role === "DEALER";
 
   async function saveProduct() {
     setSubmitting(true);
+    setFormError("");
     try {
       const response = await fetch(editing ? `/api/products/${editing.id}` : "/api/products", {
         method: editing ? "PATCH" : "POST",
@@ -49,7 +51,7 @@ export function InventoryPage() {
       setEditing(null);
       setForm(emptyProduct);
     } catch (error) {
-      window.alert(error instanceof Error ? error.message : "Unable to save product.");
+      setFormError(error instanceof Error ? error.message : "Unable to save product.");
     } finally {
       setSubmitting(false);
     }
@@ -60,7 +62,7 @@ export function InventoryPage() {
     const response = await fetch(`/api/products/${productId}`, { method: "DELETE" });
     const payload = await response.json();
     if (!response.ok) {
-      window.alert(payload.error || "Unable to delete product.");
+      setFormError(payload.error || "Unable to delete product.");
       return;
     }
     productsQuery.setData(payload);
@@ -71,25 +73,22 @@ export function InventoryPage() {
   }
 
   if (productsQuery.error || sessionQuery.error) {
-    return (
-      <div className="glass-panel rounded-[2rem] p-6 text-sm text-rose-700 shadow-sm">
-        {productsQuery.error || sessionQuery.error}
-      </div>
-    );
+    return <div className="neo-error">{productsQuery.error || sessionQuery.error}</div>;
   }
 
   return (
-    <div className="glass-panel rounded-[2rem] p-6 shadow-sm">
+    <div className="neo-card p-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <p className="text-sm uppercase tracking-[0.22em] text-gold">Inventory</p>
-          <h2 className="mt-2 text-3xl font-semibold text-forest">Warehouse and stock health</h2>
+          <p className="neo-eyebrow">Inventory</p>
+          <h2 className="mt-2 text-3xl font-bold text-forest">Warehouse and stock health</h2>
         </div>
         {isDealer ? (
           <Button
             onClick={() => {
               setEditing(null);
               setForm(emptyProduct);
+              setFormError("");
               setModalOpen(true);
             }}
           >
@@ -97,21 +96,27 @@ export function InventoryPage() {
           </Button>
         ) : null}
       </div>
+
+      {formError && !modalOpen ? <div className="neo-toast mt-4">{formError}</div> : null}
+
       <div className="mt-6 space-y-4">
+        {productsQuery.data.products.length === 0 ? (
+          <div className="neo-empty">No products in inventory. Add your first product to get started.</div>
+        ) : null}
         {productsQuery.data.products.map((item) => {
           const status = getStatus(item.stock);
           const progress = Math.min(item.stock, 100);
           return (
-            <div key={item.id} className="rounded-[1.6rem] border border-forest/10 bg-white/70 p-5">
+            <div key={item.id} className="border-3 border-black bg-white p-5 shadow-neo-sm" style={{ borderRadius: "6px" }}>
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                  <p className="text-xl font-semibold text-forest">{item.name}</p>
-                  <p className="text-sm text-forest/55">
+                  <p className="text-xl font-bold text-forest">{item.name}</p>
+                  <p className="text-sm font-medium text-forest/55">
                     {item.category} | {formatCurrency(item.price)}
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="rounded-full bg-forest/5 px-4 py-2 text-sm font-semibold text-forest">{status.label}</div>
+                  <div className="neo-pill bg-forest/5 text-forest">{status.label}</div>
                   {isDealer ? (
                     <>
                       <button
@@ -123,23 +128,24 @@ export function InventoryPage() {
                             price: item.price,
                             stock: item.stock
                           });
+                          setFormError("");
                           setModalOpen(true);
                         }}
-                        className="rounded-full bg-forest/5 p-2 text-forest/60"
+                        className="border-2 border-black bg-white p-2 text-forest/60 hover:shadow-neo-sm"
                       >
                         <PencilLine className="h-4 w-4" />
                       </button>
-                      <button onClick={() => removeProduct(item.id)} className="rounded-full bg-rose-50 p-2 text-rose-600">
+                      <button onClick={() => removeProduct(item.id)} className="border-2 border-black bg-rose-100 p-2 text-rose-700 hover:shadow-neo-sm">
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </>
                   ) : null}
                 </div>
               </div>
-              <div className="mt-5 h-3 rounded-full bg-forest/10">
-                <div className={`h-full rounded-full ${status.color}`} style={{ width: `${progress}%` }} />
+              <div className="mt-5 h-4 border-2 border-black bg-white" style={{ borderRadius: "2px" }}>
+                <div className={`h-full ${status.color}`} style={{ width: `${progress}%` }} />
               </div>
-              <div className="mt-3 flex justify-between text-sm text-forest/60">
+              <div className="mt-3 flex justify-between text-sm font-medium text-forest/60">
                 <span>{item.stock} units available</span>
                 <span>Latest change {item.trend > 0 ? `+${item.trend}` : item.trend}</span>
               </div>
@@ -149,12 +155,12 @@ export function InventoryPage() {
       </div>
 
       {modalOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/45 px-4">
-          <div className="w-full max-w-xl rounded-[2rem] bg-background p-6 shadow-ambient">
-            <p className="text-sm uppercase tracking-[0.22em] text-gold">
+        <div className="neo-overlay">
+          <div className="neo-modal max-w-xl">
+            <p className="neo-eyebrow">
               {editing ? "Update product" : "Add product"}
             </p>
-            <h3 className="mt-2 text-3xl font-semibold text-forest">
+            <h3 className="mt-2 text-3xl font-bold text-forest">
               {editing ? editing.name : "New inventory item"}
             </h3>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -165,18 +171,18 @@ export function InventoryPage() {
                 ] as const
               ).map(([key, label]) => (
                 <div key={key}>
-                  <label htmlFor={`product-${key}`} className="mb-2 block text-sm font-medium text-forest/70">{label}</label>
+                  <label htmlFor={`product-${key}`} className="neo-label">{label}</label>
                   <input
                     id={`product-${key}`}
                     value={form[key]}
                     onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value }))}
                     placeholder={`Enter ${label.toLowerCase()}`}
-                    className="w-full rounded-2xl border border-forest/10 bg-white/80 px-4 py-3 outline-none"
+                    className="neo-input"
                   />
                 </div>
               ))}
               <div>
-                <label htmlFor="product-price" className="mb-2 block text-sm font-medium text-forest/70">Price</label>
+                <label htmlFor="product-price" className="neo-label">Price</label>
                 <input
                   id="product-price"
                   type="number"
@@ -184,11 +190,11 @@ export function InventoryPage() {
                   value={form.price}
                   onChange={(event) => setForm((current) => ({ ...current, price: Number(event.target.value) }))}
                   placeholder="Price"
-                  className="w-full rounded-2xl border border-forest/10 bg-white/80 px-4 py-3 outline-none"
+                  className="neo-input"
                 />
               </div>
               <div>
-                <label htmlFor="product-stock" className="mb-2 block text-sm font-medium text-forest/70">Stock</label>
+                <label htmlFor="product-stock" className="neo-label">Stock</label>
                 <input
                   id="product-stock"
                   type="number"
@@ -196,10 +202,11 @@ export function InventoryPage() {
                   value={form.stock}
                   onChange={(event) => setForm((current) => ({ ...current, stock: Number(event.target.value) }))}
                   placeholder="Stock count"
-                  className="w-full rounded-2xl border border-forest/10 bg-white/80 px-4 py-3 outline-none"
+                  className="neo-input"
                 />
               </div>
             </div>
+            {formError ? <div className="neo-toast">{formError}</div> : null}
             <div className="mt-6 flex gap-3">
               <Button className="flex-1" onClick={saveProduct} disabled={submitting}>
                 {submitting ? "Saving..." : editing ? "Save Changes" : "Create Product"}

@@ -12,22 +12,15 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   ref
 ) {
   const styles = {
-    primary:
-      "bg-forest text-background shadow-ambient hover:bg-moss",
-    secondary:
-      "border border-forest/15 bg-white/80 text-forest hover:border-gold/40 hover:text-ink",
-    ghost:
-      "bg-transparent text-forest hover:bg-forest/5"
+    primary: "neo-btn-primary",
+    secondary: "neo-btn-secondary",
+    ghost: "neo-btn-ghost"
   };
 
   return (
     <button
       ref={ref}
-      className={cn(
-        "inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.03] active:scale-[0.97]",
-        styles[variant],
-        className
-      )}
+      className={cn(styles[variant], className)}
       {...props}
     />
   );

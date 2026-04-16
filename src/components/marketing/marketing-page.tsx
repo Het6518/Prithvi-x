@@ -66,6 +66,9 @@ const pricing = [
   }
 ];
 
+/* ============================================================
+   PART 1 — CINEMATIC SPLASH SCREEN (4-5s, Earth animation)
+   ============================================================ */
 function SplashScreen() {
   const [visible, setVisible] = useState(true);
 
@@ -79,7 +82,7 @@ function SplashScreen() {
     const timer = window.setTimeout(() => {
       window.localStorage.setItem("prithvix-splash", "1");
       setVisible(false);
-    }, 2600);
+    }, 4800);
 
     return () => window.clearTimeout(timer);
   }, []);
@@ -88,59 +91,78 @@ function SplashScreen() {
     <AnimatePresence>
       {visible ? (
         <motion.div
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden bg-ink"
-          exit={{ opacity: 0, transition: { duration: 0.8 } }}
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden"
+          style={{ backgroundColor: "#0E1A14" }}
+          exit={{ opacity: 0, transition: { duration: 1.2, ease: "easeInOut" } }}
         >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(212,168,83,0.16),transparent_16%),radial-gradient(circle_at_80%_10%,rgba(38,97,71,0.38),transparent_22%),linear-gradient(180deg,rgba(14,26,20,1),rgba(17,37,28,1))]" />
-          <div className="absolute inset-0 opacity-40 [background-image:radial-gradient(circle,rgba(255,255,255,0.22)_1px,transparent_1px)] [background-size:24px_24px]" />
+          {/* Subtle dot grid */}
+          <div className="absolute inset-0 opacity-20" style={{
+            backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1px)",
+            backgroundSize: "28px 28px"
+          }} />
 
           {/* Atmospheric glow rings */}
           <motion.div
-            className="absolute h-[420px] w-[420px] rounded-full border border-gold/10 sm:h-[520px] sm:w-[520px]"
+            className="absolute rounded-full"
+            style={{ width: 520, height: 520, border: "2px solid rgba(212,168,83,0.15)" }}
             initial={{ opacity: 0, scale: 0.6 }}
-            animate={{ opacity: 0.3, scale: 1.1 }}
-            transition={{ duration: 2.5, ease: "easeOut" }}
+            animate={{ opacity: 0.4, scale: 1.1 }}
+            transition={{ duration: 3, ease: "easeOut" }}
           />
           <motion.div
-            className="absolute h-[520px] w-[520px] rounded-full border border-white/5 sm:h-[640px] sm:w-[640px]"
+            className="absolute rounded-full"
+            style={{ width: 680, height: 680, border: "1px solid rgba(255,255,255,0.06)" }}
             initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 0.15, scale: 1.2 }}
-            transition={{ duration: 3, ease: "easeOut" }}
+            animate={{ opacity: 0.2, scale: 1.3 }}
+            transition={{ duration: 3.5, ease: "easeOut" }}
           />
 
           <div className="relative z-10 flex w-full max-w-xl flex-col items-center px-6">
-            {/* Earth Image with zoom + rotation */}
+            {/* Earth Image — scale: 0.6→1.2, rotate: -10deg→+10deg, gold glow */}
             <motion.div
-              className="relative h-[280px] w-[280px] overflow-hidden rounded-full shadow-[0_0_80px_rgba(212,168,83,0.2),0_0_160px_rgba(26,60,43,0.3)] sm:h-[340px] sm:w-[340px]"
-              initial={{ opacity: 0, scale: 0.7, rotate: -8 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
+              className="relative overflow-hidden"
+              style={{
+                width: 320,
+                height: 320,
+                borderRadius: "50%",
+                boxShadow: "0 0 60px rgba(212,168,83,0.35), 0 0 120px rgba(212,168,83,0.15), 0 0 200px rgba(26,60,43,0.3)"
+              }}
+              initial={{ opacity: 0, scale: 0.6, rotate: -10 }}
+              animate={{ opacity: 1, scale: 1.2, rotate: 10 }}
+              transition={{ duration: 4, ease: [0.16, 1, 0.3, 1] }}
             >
               <motion.img
                 src="/earth.png"
                 alt="Planet Earth from space"
                 className="h-full w-full object-cover"
-                animate={{ scale: [1, 1.06, 1], rotate: [0, 3, 0] }}
-                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                animate={{ scale: [1, 1.08, 1], rotate: [0, 4, 0] }}
+                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
               />
-              {/* Atmospheric edge glow */}
-              <div className="absolute inset-0 rounded-full shadow-[inset_0_0_60px_rgba(212,168,83,0.15),inset_0_0_120px_rgba(26,60,43,0.2)]" />
+              {/* Gold atmosphere glow */}
+              <div className="absolute inset-0 rounded-full" style={{
+                boxShadow: "inset 0 0 80px rgba(212,168,83,0.2), inset 0 0 140px rgba(26,60,43,0.25)"
+              }} />
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 18 }}
+              initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35, duration: 0.9 }}
+              transition={{ delay: 0.5, duration: 1 }}
               className="mt-10 text-center"
             >
-              <p className="text-sm uppercase tracking-[0.55em] text-gold">Prithvix</p>
-              <h1 className="mt-4 font-heading text-5xl text-background sm:text-6xl">Rooted In Growth</h1>
+              <p className="text-xs font-bold uppercase tracking-[0.6em]" style={{ color: "#D4A853" }}>
+                Prithvix
+              </p>
+              <h1 className="mt-4 font-heading text-5xl sm:text-6xl" style={{ color: "#F5F0E8" }}>
+                Rooted In Growth
+              </h1>
               <button
                 onClick={() => {
                   window.localStorage.setItem("prithvix-splash", "1");
                   setVisible(false);
                 }}
-                className="mt-6 rounded-full border border-white/15 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur transition-all duration-300 hover:scale-105 hover:bg-white/20"
+                className="mt-8 border-3 border-white/20 bg-white/10 px-8 py-3 text-sm font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-white/20 hover:border-white/40"
+                style={{ borderRadius: "6px" }}
               >
                 Enter Experience
               </button>
@@ -152,6 +174,9 @@ function SplashScreen() {
   );
 }
 
+/* ============================================================
+   FEATURE BLOCK — neobrutalist
+   ============================================================ */
 function FeatureBlock({
   feature,
   reverse = false
@@ -167,60 +192,62 @@ function FeatureBlock({
     <section ref={ref} className="section-shell py-12 sm:py-20">
       <div className={`grid items-center gap-10 lg:grid-cols-2 ${reverse ? "lg:[&>*:first-child]:order-2" : ""}`}>
         <div className="space-y-5">
-          <div className="inline-flex rounded-full bg-gold/12 p-3 text-gold">
+          <div className="inline-flex border-3 border-black bg-gold/20 p-3 text-gold shadow-neo-sm" style={{ borderRadius: "6px" }}>
             <Icon className="h-6 w-6" />
           </div>
           <h3 className="font-heading text-3xl text-forest sm:text-4xl">{feature.title}</h3>
-          <p className="text-lg leading-8 text-forest/75">{feature.copy}</p>
+          <p className="text-lg font-medium leading-8 text-forest/75">{feature.copy}</p>
           <div className="grid gap-3 sm:grid-cols-3">
             {feature.mockup.map((item) => (
-              <div key={item} className="rounded-3xl border border-forest/10 bg-white/70 p-4 text-sm font-medium text-forest shadow-sm">
+              <div key={item} className="border-3 border-black bg-white p-4 text-sm font-bold text-forest shadow-neo-sm" style={{ borderRadius: "6px" }}>
                 {item}
               </div>
             ))}
           </div>
         </div>
         <motion.div
-          whileHover={{ y: -6 }}
-          className="glass-panel relative overflow-hidden rounded-[2rem] p-5 shadow-ambient"
+          whileHover={{ y: -4, x: -2 }}
+          className="neo-card relative overflow-hidden p-5"
         >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(212,168,83,0.22),transparent_28%),linear-gradient(160deg,rgba(255,255,255,0.75),rgba(255,255,255,0.42))]" />
+          <div className="absolute inset-0" style={{
+            background: "linear-gradient(160deg, rgba(212,168,83,0.08), transparent 40%)"
+          }} />
           <div className="relative space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-forest/50">Live module preview</p>
-                <p className="text-lg font-semibold text-forest">{feature.title}</p>
+                <p className="text-xs font-bold text-forest/50 uppercase tracking-wider">Live module preview</p>
+                <p className="text-lg font-bold text-forest">{feature.title}</p>
               </div>
-              <div className="rounded-full bg-forest px-3 py-1 text-xs font-semibold text-background">Active</div>
+              <div className="neo-pill bg-forest text-background">Active</div>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-[1.5rem] bg-forest p-5 text-background">
-                <p className="text-xs uppercase tracking-[0.24em] text-background/60">Signal</p>
-                <p className="mt-3 text-3xl font-semibold">92%</p>
+              <div className="neo-card-dark p-5">
+                <p className="text-xs font-bold uppercase tracking-[0.24em] text-gold">Signal</p>
+                <p className="mt-3 text-3xl font-bold">92%</p>
                 <p className="mt-2 text-sm text-background/70">Operational confidence in current cycle</p>
               </div>
-              <div className="space-y-3 rounded-[1.5rem] bg-background/75 p-5">
+              <div className="space-y-3 border-3 border-black bg-white p-5" style={{ borderRadius: "8px" }}>
                 {[72, 44, 88].map((value) => (
                   <div key={value}>
-                    <div className="mb-2 flex justify-between text-xs text-forest/60">
+                    <div className="mb-2 flex justify-between text-xs font-bold text-forest/60">
                       <span>Workflow completeness</span>
                       <span>{value}%</span>
                     </div>
-                    <div className="h-2 rounded-full bg-forest/10">
+                    <div className="h-3 border-2 border-black bg-white" style={{ borderRadius: "2px" }}>
                       <motion.div
                         initial={{ width: 0 }}
                         whileInView={{ width: `${value}%` }}
                         viewport={{ once: true }}
                         transition={{ duration: 1.1 }}
-                        className="h-full rounded-full bg-gradient-to-r from-gold to-forest"
+                        className="h-full bg-forest"
                       />
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-            <div className="rounded-[1.5rem] border border-forest/10 bg-white/70 p-5">
-              <div className="flex items-center justify-between text-sm text-forest/60">
+            <div className="border-3 border-black bg-white p-5" style={{ borderRadius: "8px" }}>
+              <div className="flex items-center justify-between text-xs font-bold text-forest/60 uppercase tracking-wider">
                 <span>Animated UI panel</span>
                 <span>Realtime status</span>
               </div>
@@ -232,18 +259,18 @@ function FeatureBlock({
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: step * 0.1 }}
-                    className="rounded-2xl bg-background p-4"
+                    className="border-2 border-black bg-background p-4" style={{ borderRadius: "6px" }}
                   >
-                    <div className="mb-3 h-2 rounded-full bg-forest/10">
+                    <div className="mb-3 h-3 border border-black bg-white" style={{ borderRadius: "2px" }}>
                       <motion.div
                         initial={{ width: 0 }}
                         whileInView={{ width: `${step * 28}%` }}
                         viewport={{ once: true }}
                         transition={{ duration: 1 }}
-                        className="h-full rounded-full bg-forest"
+                        className="h-full bg-forest"
                       />
                     </div>
-                    <p className="text-sm font-semibold text-forest">Flow {step}</p>
+                    <p className="text-sm font-bold text-forest">Flow {step}</p>
                     <p className="mt-2 text-xs leading-5 text-forest/60">Dealer operations, mapped and paced with the season.</p>
                   </motion.div>
                 ))}
@@ -256,6 +283,9 @@ function FeatureBlock({
   );
 }
 
+/* ============================================================
+   MAIN MARKETING PAGE
+   ============================================================ */
 export function MarketingPage() {
   const [testimonialIndex, setTestimonialIndex] = useState(0);
   const stats = useMemo(
@@ -276,37 +306,16 @@ export function MarketingPage() {
   }, []);
 
   return (
-    <main className="overflow-hidden">
+    <main className="overflow-hidden bg-background">
       <SplashScreen />
 
+      {/* HERO */}
       <section className="relative min-h-screen overflow-hidden">
         <div className="absolute inset-0 bg-grain" />
-        <div className="absolute inset-0 opacity-30 [background-image:radial-gradient(circle,rgba(26,60,43,0.14)_1px,transparent_1px)] [background-size:28px_28px]" />
-        {/* Enhanced gradient overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(212,168,83,0.06)_0%,transparent_40%,rgba(26,60,43,0.08)_100%)]" />
-
-        {/* Floating particles */}
-        {[...Array(5)].map((_, i) => (
-          <motion.div
-            key={`particle-${i}`}
-            className="absolute h-1.5 w-1.5 rounded-full bg-gold/30"
-            style={{
-              left: `${15 + i * 18}%`,
-              top: `${20 + (i % 3) * 25}%`
-            }}
-            animate={{
-              y: [0, -30, 0],
-              opacity: [0.2, 0.6, 0.2],
-              scale: [1, 1.4, 1]
-            }}
-            transition={{
-              duration: 4 + i * 0.8,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: i * 0.5
-            }}
-          />
-        ))}
+        <div className="absolute inset-0 opacity-20" style={{
+          backgroundImage: "radial-gradient(circle, rgba(26,60,43,0.18) 1px, transparent 1px)",
+          backgroundSize: "28px 28px"
+        }} />
 
         <div className="section-shell relative grid min-h-screen items-center gap-10 py-20 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="max-w-2xl">
@@ -314,7 +323,7 @@ export function MarketingPage() {
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="text-sm font-semibold uppercase tracking-[0.36em] text-gold"
+              className="neo-eyebrow"
             >
               Premium AgriTech OS
             </motion.p>
@@ -330,7 +339,7 @@ export function MarketingPage() {
               initial={{ opacity: 0, y: 22 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.16, duration: 0.9 }}
-              className="mt-6 max-w-xl text-lg leading-8 text-forest/75"
+              className="mt-6 max-w-xl text-lg font-medium leading-8 text-forest/75"
             >
               Prithvix helps agri dealers unify farmer onboarding, field intelligence, inventory, udhaar collections, and multilingual agronomy guidance in one elegant workflow.
             </motion.p>
@@ -342,7 +351,7 @@ export function MarketingPage() {
             >
               <Link
                 href="/login"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-forest px-6 py-3 text-sm font-semibold text-background shadow-ambient transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.03] hover:bg-moss active:scale-[0.97]"
+                className="neo-btn-primary inline-flex items-center justify-center gap-2"
               >
                 Request Demo <ArrowRight className="h-4 w-4" />
               </Link>
@@ -359,7 +368,7 @@ export function MarketingPage() {
               className="mt-12 flex flex-wrap gap-3"
             >
               {["Dealer-ready ERP", "Field-first workflows", "AI agronomy guidance"].map((item) => (
-                <div key={item} className="rounded-full border border-forest/10 bg-white/70 px-4 py-2 text-sm font-medium text-forest shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+                <div key={item} className="neo-pill bg-white text-forest">
                   {item}
                 </div>
               ))}
@@ -372,17 +381,18 @@ export function MarketingPage() {
             className="relative"
           >
             <LazyGlobe />
-            <div className="glass-panel absolute -bottom-6 left-5 rounded-[1.6rem] px-5 py-4 shadow-ambient">
-              <p className="text-xs uppercase tracking-[0.24em] text-forest/45">Live network</p>
-              <p className="mt-2 text-xl font-semibold text-forest">{formatCurrency(1835000)}</p>
-              <p className="text-sm text-forest/60">Season-to-date collections monitored</p>
+            <div className="neo-card absolute -bottom-6 left-5 px-5 py-4">
+              <p className="text-xs font-bold uppercase tracking-[0.24em] text-forest/45">Live network</p>
+              <p className="mt-2 text-xl font-bold text-forest">{formatCurrency(1835000)}</p>
+              <p className="text-sm font-medium text-forest/60">Season-to-date collections monitored</p>
             </div>
           </motion.div>
         </div>
       </section>
 
+      {/* STATS BAR */}
       <section className="section-shell py-8">
-        <div className="grid gap-4 rounded-[2rem] border border-forest/10 bg-forest px-6 py-8 text-background shadow-ambient sm:grid-cols-3">
+        <div className="grid gap-4 neo-card-dark px-6 py-8 sm:grid-cols-3">
           {stats.map((stat, index) => (
             <motion.div
               key={stat.label}
@@ -390,15 +400,16 @@ export function MarketingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.12 }}
-              className="rounded-[1.4rem] border border-white/10 bg-white/5 p-5"
+              className="border-3 border-white/15 bg-white/5 p-5" style={{ borderRadius: "6px" }}
             >
-              <p className="text-sm uppercase tracking-[0.26em] text-background/60">{stat.label}</p>
-              <p className="mt-3 text-4xl font-semibold">{stat.value}</p>
+              <p className="text-xs font-bold uppercase tracking-[0.26em] text-gold">{stat.label}</p>
+              <p className="mt-3 text-4xl font-bold">{stat.value}</p>
             </motion.div>
           ))}
         </div>
       </section>
 
+      {/* PLATFORM HEADING */}
       <section id="platform" className="section-shell pt-20">
         <SectionHeading
           eyebrow="Platform"
@@ -407,10 +418,12 @@ export function MarketingPage() {
         />
       </section>
 
+      {/* FEATURE BLOCKS */}
       {featureSections.map((feature, index) => (
         <FeatureBlock key={feature.title} feature={feature} reverse={index % 2 === 1} />
       ))}
 
+      {/* HOW IT WORKS */}
       <section id="pricing" className="section-shell py-20">
         <SectionHeading
           eyebrow="How It Works"
@@ -419,7 +432,7 @@ export function MarketingPage() {
           align="center"
         />
         <div className="relative mt-12 grid gap-6 lg:grid-cols-4">
-          <div className="absolute left-[12%] right-[12%] top-8 hidden h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent lg:block" />
+          <div className="absolute left-[12%] right-[12%] top-8 hidden h-1 bg-black lg:block" />
           {["Register Dealer", "Add Farmers", "Log Visits", "Track Everything"].map((step, index) => (
             <motion.div
               key={step}
@@ -427,13 +440,13 @@ export function MarketingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="relative rounded-[1.8rem] border border-forest/10 bg-white/75 p-6 shadow-sm"
+              className="neo-card relative p-6"
             >
-              <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-full bg-gold text-base font-semibold text-ink">
+              <div className="mb-5 inline-flex h-12 w-12 items-center justify-center border-3 border-black bg-gold text-base font-bold text-ink shadow-neo-sm" style={{ borderRadius: "4px" }}>
                 {index + 1}
               </div>
-              <h3 className="text-xl font-semibold text-forest">{step}</h3>
-              <p className="mt-3 text-sm leading-6 text-forest/65">
+              <h3 className="text-xl font-bold text-forest">{step}</h3>
+              <p className="mt-3 text-sm font-medium leading-6 text-forest/65">
                 Structured tools guide the team through onboarding, season records, recovery actions, and collections.
               </p>
             </motion.div>
@@ -441,6 +454,7 @@ export function MarketingPage() {
         </div>
       </section>
 
+      {/* PRICING */}
       <section className="section-shell py-20">
         <SectionHeading
           eyebrow="Pricing"
@@ -452,18 +466,19 @@ export function MarketingPage() {
           {pricing.map((plan) => (
             <div
               key={plan.name}
-              className={`rounded-[2rem] border p-8 shadow-ambient ${plan.featured ? "border-gold/60 bg-forest text-background shadow-glow" : "border-forest/10 bg-white/80 text-forest"}`}
+              className={`border-3 border-black p-8 ${plan.featured ? "bg-forest text-background shadow-neo-gold" : "bg-white text-forest shadow-neo"}`}
+              style={{ borderRadius: "8px" }}
             >
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm uppercase tracking-[0.26em] text-gold">{plan.name}</p>
+                  <p className="neo-eyebrow">{plan.name}</p>
                   <div className="mt-4 flex items-end gap-2">
-                    <p className="text-5xl font-semibold">{plan.price}</p>
-                    <p className={plan.featured ? "text-background/60" : "text-forest/55"}>{plan.period}</p>
+                    <p className="text-5xl font-bold">{plan.price}</p>
+                    <p className={plan.featured ? "text-background/60 font-medium" : "text-forest/55 font-medium"}>{plan.period}</p>
                   </div>
                 </div>
                 {plan.featured ? (
-                  <div className="rounded-full border border-gold/30 bg-gold/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-gold">
+                  <div className="neo-pill border-gold bg-gold/20 text-gold">
                     Most Popular
                   </div>
                 ) : null}
@@ -472,13 +487,13 @@ export function MarketingPage() {
                 {plan.features.map((feature) => (
                   <div key={feature} className="flex items-center gap-3">
                     <Check className={`h-4 w-4 ${plan.featured ? "text-gold" : "text-forest"}`} />
-                    <span className={plan.featured ? "text-background/85" : "text-forest/75"}>{feature}</span>
+                    <span className={`font-medium ${plan.featured ? "text-background/85" : "text-forest/75"}`}>{feature}</span>
                   </div>
                 ))}
               </div>
               <Button
                 variant={plan.featured ? "secondary" : "primary"}
-                className={`mt-8 w-full ${plan.featured ? "border-white/15 bg-white/10 text-background hover:bg-white/15" : ""}`}
+                className={`mt-8 w-full ${plan.featured ? "border-white/20 bg-white/10 text-background hover:bg-white/20" : ""}`}
               >
                 Start With {plan.name}
               </Button>
@@ -487,6 +502,7 @@ export function MarketingPage() {
         </div>
       </section>
 
+      {/* TESTIMONIALS */}
       <section className="section-shell py-20">
         <SectionHeading
           eyebrow="Trust"
@@ -494,7 +510,7 @@ export function MarketingPage() {
           copy="Designed to feel premium in the office and practical in the village."
           align="center"
         />
-        <div className="mt-12 rounded-[2rem] border border-forest/10 bg-white/80 p-8 shadow-ambient">
+        <div className="neo-card mt-12 p-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={testimonials[testimonialIndex].name}
@@ -505,13 +521,13 @@ export function MarketingPage() {
               className="text-center"
             >
               <p className="mx-auto max-w-3xl font-heading text-3xl leading-tight text-forest">
-                "{testimonials[testimonialIndex].quote}"
+                &ldquo;{testimonials[testimonialIndex].quote}&rdquo;
               </p>
-              <p className="mt-6 text-lg font-semibold text-forest">{testimonials[testimonialIndex].name}</p>
-              <p className="text-sm uppercase tracking-[0.24em] text-gold">{testimonials[testimonialIndex].village}</p>
+              <p className="mt-6 text-lg font-bold text-forest">{testimonials[testimonialIndex].name}</p>
+              <p className="neo-eyebrow mt-1">{testimonials[testimonialIndex].village}</p>
               <div className="mt-8 flex justify-center gap-3">
                 {["Dealer Verified", "Village-first Workflow", "AI-enabled Support"].map((badge) => (
-                  <span key={badge} className="rounded-full bg-forest/5 px-4 py-2 text-sm font-medium text-forest/70">
+                  <span key={badge} className="neo-pill bg-forest/5 text-forest">
                     {badge}
                   </span>
                 ))}
@@ -521,21 +537,22 @@ export function MarketingPage() {
         </div>
       </section>
 
+      {/* CTA */}
       <section className="section-shell pb-16 pt-8">
-        <div className="rounded-[2.2rem] bg-ink px-8 py-12 text-background shadow-ambient">
+        <div className="neo-card-dark px-8 py-12">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-gold">Ready to grow</p>
-              <h2 className="mt-4 font-heading text-4xl">Bring your dealer operations into one premium system.</h2>
+              <p className="neo-eyebrow">Ready to grow</p>
+              <h2 className="mt-4 font-heading text-4xl text-background">Bring your dealer operations into one premium system.</h2>
             </div>
             <div className="flex flex-col gap-4 sm:flex-row">
               <Link
                 href="/login"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-forest px-6 py-3 text-sm font-semibold text-background shadow-ambient transition hover:bg-moss"
+                className="neo-btn-accent inline-flex items-center justify-center gap-2"
               >
                 Enter Dashboard <ArrowRight className="h-4 w-4" />
               </Link>
-              <Button variant="secondary" className="border-white/15 bg-white/10 text-background hover:bg-white/15">
+              <Button variant="secondary" className="border-white/20 bg-white/10 text-background hover:bg-white/20">
                 Book Product Walkthrough
               </Button>
             </div>
@@ -543,20 +560,21 @@ export function MarketingPage() {
         </div>
       </section>
 
-      <footer className="border-t border-forest/10 bg-white/70">
-        <div className="section-shell flex flex-col gap-6 py-10 text-sm text-forest/65 lg:flex-row lg:items-center lg:justify-between">
+      {/* FOOTER */}
+      <footer className="border-t-3 border-black bg-white">
+        <div className="section-shell flex flex-col gap-6 py-10 text-sm font-medium text-forest/65 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="font-semibold text-forest">Prithvix</p>
+            <p className="text-lg font-bold text-forest">Prithvix</p>
             <p className="mt-1">Dealer-first AgriTech operations for registrations, inventory, credit, analytics, and AI advisory.</p>
           </div>
           <div className="flex flex-wrap gap-4">
-            <Link href="/login" className="transition hover:text-forest">
+            <Link href="/login" className="font-bold transition hover:text-forest">
               Dashboard
             </Link>
-            <a href="#pricing" className="transition hover:text-forest">
+            <a href="#pricing" className="font-bold transition hover:text-forest">
               Pricing
             </a>
-            <a href="#platform" className="transition hover:text-forest">
+            <a href="#platform" className="font-bold transition hover:text-forest">
               Platform
             </a>
           </div>

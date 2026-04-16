@@ -71,7 +71,7 @@ export function GoogleTranslate() {
         body {
           top: 0 !important;
         }
-        /* style the dropdown */
+        /* Neobrutalist dropdown style */
         .goog-te-gadget {
           font-family: var(--font-jakarta), sans-serif !important;
           font-size: 0 !important;
@@ -79,25 +79,26 @@ export function GoogleTranslate() {
         .goog-te-gadget .goog-te-combo {
           font-size: 13px !important;
           font-family: var(--font-jakarta), sans-serif !important;
+          font-weight: 700 !important;
+          text-transform: uppercase !important;
+          letter-spacing: 0.05em !important;
           padding: 8px 14px;
-          border: 1px solid rgba(26, 60, 43, 0.15);
-          border-radius: 999px;
-          background: rgba(255, 255, 255, 0.85);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          color: #1A3C2B;
+          border: 3px solid #000;
+          border-radius: 6px;
+          background: #F5F0E8;
+          color: #0E1A14;
           cursor: pointer;
           outline: none;
-          box-shadow: 0 4px 20px rgba(14, 26, 20, 0.08);
-          transition: border-color 0.2s, box-shadow 0.2s;
+          box-shadow: 3px 3px 0px #000;
+          transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
         .goog-te-gadget .goog-te-combo:hover {
-          border-color: #D4A853;
-          box-shadow: 0 4px 20px rgba(212, 168, 83, 0.15);
+          transform: translate(1px, 1px);
+          box-shadow: 1px 1px 0px #000;
         }
         .goog-te-gadget .goog-te-combo:focus {
-          border-color: #D4A853;
-          box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.2);
+          box-shadow: 0px 0px 0px #000;
+          transform: translate(3px, 3px);
         }
         /* hide powered by text */
         .goog-te-gadget > span {

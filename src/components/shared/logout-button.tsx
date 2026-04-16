@@ -25,7 +25,7 @@ export function LogoutButton() {
   return (
     <Button
       variant="secondary"
-      className="mt-5 w-full border-white/10 bg-white/10 text-background hover:bg-white/15"
+      className="mt-5 w-full border-gold bg-gold/20 text-background hover:bg-gold/40"
       onClick={handleLogout}
       disabled={loading}
     >

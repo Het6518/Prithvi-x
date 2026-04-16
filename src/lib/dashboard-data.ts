@@ -1,6 +1,7 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import {
+  cityGeocodeLookup,
   fallbackChatSessions,
   fallbackFarmers,
   fallbackPayments,
@@ -189,18 +190,35 @@ function buildAnalyticsFromFarmers(farmers: FarmerRecord[], payments: PaymentRec
   };
 }
 
+function geocodeFarmer(farmer: FarmerRecord): { lat: number; lng: number } | null {
+  if (farmer.latitude && farmer.longitude) {
+    return { lat: farmer.latitude, lng: farmer.longitude };
+  }
+  // Try geocoding by village name
+  const key = farmer.village.toLowerCase().trim();
+  const coords = cityGeocodeLookup[key];
+  if (coords) {
+    return coords;
+  }
+  return null;
+}
+
 function buildMapPoints(farmers: FarmerRecord[]): MapPoint[] {
   return farmers
-    .filter((farmer) => farmer.latitude && farmer.longitude)
-    .map((farmer) => ({
-      id: farmer.id,
-      name: farmer.name,
-      village: farmer.village,
-      lat: farmer.latitude || 0,
-      lng: farmer.longitude || 0,
-      intensity: Math.min(1, Math.max(0.25, farmer.outstandingAmount / 50000)),
-      farmers: 1
-    }));
+    .map((farmer) => {
+      const coords = geocodeFarmer(farmer);
+      if (!coords) return null;
+      return {
+        id: farmer.id,
+        name: farmer.name,
+        village: farmer.village,
+        lat: coords.lat,
+        lng: coords.lng,
+        intensity: Math.min(1, Math.max(0.25, farmer.outstandingAmount / 50000)),
+        farmers: 1
+      };
+    })
+    .filter((point): point is MapPoint => point !== null);
 }
 
 function toChatSessionRecord(

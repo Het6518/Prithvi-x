@@ -17,14 +17,16 @@ export async function DashboardShell({ children }: { children: React.ReactNode }
   const user = await getCurrentUser();
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,rgba(245,240,232,1),rgba(238,233,223,1))]">
+    <div className="min-h-screen bg-background">
       <div className="mx-auto grid min-h-screen max-w-[1600px] gap-6 p-4 lg:grid-cols-[280px_1fr] lg:p-6">
-        <aside className="glass-panel rounded-[2rem] p-6 shadow-ambient">
+        <aside className="neo-card p-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-forest text-lg font-semibold text-background">P</div>
+            <div className="flex h-12 w-12 items-center justify-center border-3 border-black bg-forest text-lg font-bold text-background shadow-neo-sm">
+              P
+            </div>
             <div>
-              <p className="text-xs uppercase tracking-[0.28em] text-gold">Prithvix</p>
-              <p className="text-lg font-semibold text-forest">Dealer OS</p>
+              <p className="neo-eyebrow">Prithvix</p>
+              <p className="text-lg font-bold text-forest">Dealer OS</p>
             </div>
           </div>
           <nav className="mt-10 space-y-2">
@@ -34,7 +36,7 @@ export async function DashboardShell({ children }: { children: React.ReactNode }
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-forest/75 transition hover:bg-forest hover:text-background"
+                  className="flex items-center gap-3 border-2 border-transparent px-4 py-3 text-sm font-bold text-forest/75 transition-all duration-150 hover:border-black hover:bg-gold/20 hover:shadow-neo-sm hover:translate-x-0.5"
                 >
                   <Icon className="h-4 w-4" />
                   {item.label}
@@ -42,9 +44,9 @@ export async function DashboardShell({ children }: { children: React.ReactNode }
               );
             })}
           </nav>
-          <div className="mt-12 rounded-[1.6rem] bg-forest p-5 text-background">
-            <p className="text-xs uppercase tracking-[0.22em] text-background/60">Logged in</p>
-            <p className="mt-3 text-xl font-semibold">{user?.name || "Dealer User"}</p>
+          <div className="mt-12 border-3 border-black bg-forest p-5 text-background shadow-neo-gold" style={{ borderRadius: "8px" }}>
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-gold">Logged in</p>
+            <p className="mt-3 text-xl font-bold">{user?.name || "Dealer User"}</p>
             <p className="text-sm text-background/65">
               {user?.role || "DEALER"} | {(user as { sub?: string } | null)?.sub || "demo-user"}
             </p>
@@ -52,14 +54,14 @@ export async function DashboardShell({ children }: { children: React.ReactNode }
           </div>
         </aside>
         <div className="space-y-6">
-          <header className="glass-panel flex flex-col justify-between gap-4 rounded-[2rem] p-6 shadow-sm sm:flex-row sm:items-center">
+          <header className="neo-card flex flex-col justify-between gap-4 p-6 sm:flex-row sm:items-center">
             <div>
-              <p className="text-sm uppercase tracking-[0.24em] text-gold">Operations cockpit</p>
+              <p className="neo-eyebrow">Operations cockpit</p>
               <h1 className="mt-2 font-heading text-4xl text-forest">Prithvix Dashboard</h1>
             </div>
-            <div className="rounded-[1.5rem] border border-forest/10 bg-white/70 px-5 py-4 text-right">
-              <p className="text-sm text-forest/55">Season pulse</p>
-              <p className="mt-1 text-2xl font-semibold text-forest">Strong collection momentum</p>
+            <div className="border-3 border-black bg-white px-5 py-4 text-right shadow-neo-sm" style={{ borderRadius: "6px" }}>
+              <p className="text-sm font-bold text-forest/55">Season pulse</p>
+              <p className="mt-1 text-2xl font-bold text-forest">Strong collection momentum</p>
             </div>
           </header>
           {children}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { LoaderCircle, Plus, SendHorizonal } from "lucide-react";
 import { Button } from "@/components/shared/button";
 import { LoadingPanel } from "@/components/shared/loading-panel";
@@ -16,6 +16,8 @@ export function ChatPage() {
   const [loading, setLoading] = useState(false);
   const [selectedSessionId, setSelectedSessionId] = useState("");
   const [creatingNew, setCreatingNew] = useState(false);
+  const [chatError, setChatError] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!creatingNew && !selectedSessionId && chatQuery.data.sessions[0]?.id) {
@@ -31,11 +33,17 @@ export function ChatPage() {
     [chatQuery.data.sessions, selectedSessionId]
   );
 
+  // Auto-scroll to bottom on new messages
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [selectedSession?.messages, loading]);
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     if (!input.trim()) return;
 
     setLoading(true);
+    setChatError("");
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
@@ -57,7 +65,7 @@ export function ChatPage() {
       setSelectedSessionId(payload.sessionId);
       chatQuery.setData({ sessions: payload.sessions });
     } catch (error) {
-      window.alert(error instanceof Error ? error.message : "Unable to send message.");
+      setChatError(error instanceof Error ? error.message : "Unable to send message.");
     } finally {
       setLoading(false);
     }
@@ -68,55 +76,64 @@ export function ChatPage() {
   }
 
   if (chatQuery.error) {
-    return <div className="glass-panel rounded-[2rem] p-6 text-sm text-rose-700 shadow-sm">{chatQuery.error}</div>;
+    return <div className="neo-error">{chatQuery.error}</div>;
   }
 
   return (
     <div className="grid gap-6 xl:grid-cols-[300px_1fr]">
-      <aside className="glass-panel rounded-[2rem] p-5 shadow-sm">
+      <aside className="neo-card p-5">
         <div className="flex items-center justify-between">
-          <p className="text-sm uppercase tracking-[0.22em] text-gold">Sessions</p>
+          <p className="neo-eyebrow">Sessions</p>
           <button
             onClick={() => {
               setCreatingNew(true);
               setSelectedSessionId("");
+              setChatError("");
             }}
-            className="inline-flex items-center gap-2 rounded-full bg-forest/5 px-3 py-2 text-xs font-semibold text-forest"
+            className="neo-pill bg-gold/20 text-forest cursor-pointer hover:bg-gold/40 transition-colors"
           >
-            <Plus className="h-3.5 w-3.5" /> New
+            <Plus className="mr-1 h-3.5 w-3.5" /> New
           </button>
         </div>
         <div className="mt-5 space-y-3">
+          {chatQuery.data.sessions.length === 0 ? (
+            <div className="border-2 border-dashed border-black/20 p-4 text-center text-xs font-medium text-forest/50">
+              No sessions yet. Start a new one!
+            </div>
+          ) : null}
           {chatQuery.data.sessions.map((session) => (
             <button
               key={session.id}
               onClick={() => {
                 setCreatingNew(false);
                 setSelectedSessionId(session.id);
+                setChatError("");
               }}
-              className={`w-full rounded-[1.3rem] border p-4 text-left ${
+              className={`w-full border-3 border-black p-4 text-left transition-all ${
                 selectedSessionId === session.id
-                  ? "border-gold/50 bg-gold/10"
-                  : "border-forest/10 bg-white/70"
+                  ? "bg-gold/20 shadow-neo-sm"
+                  : "bg-white hover:shadow-neo-sm hover:translate-x-0.5"
               }`}
+              style={{ borderRadius: "6px" }}
             >
-              <p className="font-semibold text-forest">{session.title}</p>
+              <p className="font-bold text-forest">{session.title}</p>
               <p className="mt-1 line-clamp-2 text-sm text-forest/55">{session.preview}</p>
             </button>
           ))}
         </div>
       </aside>
 
-      <div className="glass-panel flex min-h-[720px] flex-col rounded-[2rem] p-6 shadow-sm">
-        <div className="flex flex-col gap-4 border-b border-forest/10 pb-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="neo-card flex min-h-[720px] flex-col p-6">
+        <div className="flex flex-col gap-4 border-b-3 border-black pb-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-[0.22em] text-gold">AI Agronomist</p>
-            <h2 className="mt-2 text-3xl font-semibold text-forest">Multilingual advisory support</h2>
+            <p className="neo-eyebrow">AI Agronomist</p>
+            <h2 className="mt-2 text-3xl font-bold text-forest">Multilingual advisory support</h2>
           </div>
           <select
             value={language}
             onChange={(event) => setLanguage(event.target.value)}
-            className="rounded-full border border-forest/10 bg-white/75 px-4 py-2 text-sm outline-none"
+            className="neo-select"
+            style={{ width: "auto" }}
           >
             {languages.map((item) => (
               <option key={item}>{item}</option>
@@ -126,39 +143,39 @@ export function ChatPage() {
 
         <div className="flex-1 space-y-4 overflow-y-auto py-6">
           {!selectedSession && !loading ? (
-            <div className="rounded-[1.6rem] border border-dashed border-forest/15 bg-white/60 p-6 text-sm text-forest/60">
+            <div className="neo-empty">
               Start a fresh session to ask about crop stress, irrigation, pest pressure, or nutrient deficiency.
             </div>
           ) : null}
           {(selectedSession?.messages || []).map((message) => (
             <div key={message.id} className={`flex ${message.role === "USER" ? "justify-end" : "justify-start"}`}>
-              <div
-                className={`max-w-[80%] rounded-[1.6rem] px-5 py-4 text-sm leading-7 ${
-                  message.role === "USER" ? "bg-forest text-background" : "bg-white/75 text-forest"
-                }`}
-              >
+              <div className={`max-w-[80%] ${message.role === "USER" ? "neo-bubble-user" : "neo-bubble-bot"}`}>
                 {message.content}
               </div>
             </div>
           ))}
           {loading ? (
             <div className="flex justify-start">
-              <div className="inline-flex items-center gap-3 rounded-[1.6rem] bg-white/75 px-5 py-4 text-forest">
+              <div className="neo-bubble-bot inline-flex items-center gap-3">
                 <LoaderCircle className="h-4 w-4 animate-spin" />
-                Typing response...
+                Typing...
               </div>
             </div>
           ) : null}
+          {chatError ? (
+            <div className="neo-toast">{chatError}</div>
+          ) : null}
+          <div ref={messagesEndRef} />
         </div>
 
-        <form onSubmit={handleSubmit} className="flex gap-3 border-t border-forest/10 pt-5">
+        <form onSubmit={handleSubmit} className="flex gap-3 border-t-3 border-black pt-5">
           <input
             value={input}
             onChange={(event) => setInput(event.target.value)}
-            className="flex-1 rounded-full border border-forest/10 bg-white/80 px-5 py-3 outline-none"
+            className="neo-input flex-1"
             placeholder="Ask about crop stress, irrigation, nutrient deficiency, or disease..."
           />
-          <button className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-forest text-background">
+          <button className="neo-btn-primary flex h-12 w-12 items-center justify-center !px-0" type="submit">
             <SendHorizonal className="h-4 w-4" />
           </button>
         </form>

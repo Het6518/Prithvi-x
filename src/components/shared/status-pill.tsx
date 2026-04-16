@@ -2,16 +2,16 @@ import { cn } from "@/lib/utils";
 
 export function StatusPill({ value }: { value: string }) {
   const tones: Record<string, string> = {
-    CLEAR: "bg-emerald-100 text-emerald-800",
-    DUE: "bg-amber-100 text-amber-800",
-    OVERDUE: "bg-rose-100 text-rose-800",
-    GOLD: "bg-amber-100 text-amber-900",
-    SILVER: "bg-slate-100 text-slate-700",
-    BRONZE: "bg-orange-100 text-orange-800"
+    CLEAR: "bg-emerald-200 text-emerald-900",
+    DUE: "bg-amber-200 text-amber-900",
+    OVERDUE: "bg-rose-200 text-rose-900",
+    GOLD: "bg-amber-200 text-amber-900",
+    SILVER: "bg-slate-200 text-slate-800",
+    BRONZE: "bg-orange-200 text-orange-900"
   };
 
   return (
-    <span className={cn("rounded-full px-3 py-1 text-xs font-semibold", tones[value] || "bg-forest/10 text-forest")}>
+    <span className={cn("neo-pill", tones[value] || "bg-forest/10 text-forest")}>
       {value}
     </span>
   );
