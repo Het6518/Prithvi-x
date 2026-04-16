@@ -76,19 +76,22 @@ function SplashScreen() {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden bg-[#050505]"
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden bg-[#081525]"
     >
-      {/* Starry background layers (dark sky) */}
-      <div className="absolute inset-0 opacity-60" style={{
-        backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
+      {/* Starry background layers (dark blue sky) */}
+      <div className="absolute inset-0 opacity-50" style={{
+        backgroundImage: "radial-gradient(circle, rgba(200,230,255,0.8) 1px, transparent 1px)",
         backgroundSize: "60px 60px",
         backgroundPosition: "0 0"
       }} />
-      <div className="absolute inset-0 opacity-40" style={{
-        backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.6) 1.5px, transparent 1.5px)",
+      <div className="absolute inset-0 opacity-30" style={{
+        backgroundImage: "radial-gradient(circle, rgba(200,230,255,0.6) 1.5px, transparent 1.5px)",
         backgroundSize: "100px 100px",
         backgroundPosition: "30px 40px"
       }} />
+
+      {/* Light blue atmospheric glow */}
+      <div className="absolute inset-0 z-0 bg-sky-500/10 mix-blend-screen" />
 
       {/* Full screen Earth Image */}
       <motion.div
@@ -100,16 +103,26 @@ function SplashScreen() {
         <motion.img
           src="/earth.png"
           alt="Planet Earth from space"
-          className="h-full w-full object-cover opacity-60"
+          className="h-full w-full object-cover opacity-70 mix-blend-luminosity"
           animate={{ scale: [1, 1.05, 1] }}
           transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
         />
+        
+        {/* Adds a gentle blue wash over the earth */}
+        <div className="absolute inset-0 bg-blue-500/10 mix-blend-overlay" />
+
         {/* Atmospheric gradients to ensure text visibility and deep contrast */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#081525] via-[#081525]/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#081525] via-transparent to-transparent" />
+        
+        {/* Bright light blue radial glow behind the center */}
+        <div className="absolute inset-0" style={{
+          background: "radial-gradient(circle at center, rgba(14,165,233,0.15) 0%, transparent 60%)"
+        }} />
+        
         {/* Subtle radial shadow to frame the center */}
         <div className="absolute inset-0" style={{
-          background: "radial-gradient(circle at center, transparent 0%, rgba(5,5,5,0.7) 100%)"
+          background: "radial-gradient(circle at center, transparent 0%, rgba(8,21,37,0.8) 100%)"
         }} />
       </motion.div>
 
