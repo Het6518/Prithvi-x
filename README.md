@@ -256,19 +256,6 @@ In your Vercel project dashboard, add the following under **Settings → Environ
 
 ---
 
-## 📸 Screenshots & Demo
-
-> 📷 *Screenshots and a walkthrough video will be added shortly.*
-
-| Section | Preview |
-|---|---|
-| 🏠 **Landing Page** | *(Coming soon)* |
-| 📊 **ERP Dashboard** | *(Coming soon)* |
-| 🤖 **AI Chatbot** | *(Coming soon)* |
-| 🗺️ **Farmer Map** | *(Coming soon)* |
-
----
-
 ## 🤖 AI Usage Log
 
 AI tools were used responsibly throughout development as a force-multiplier — not a replacement for engineering judgment.
