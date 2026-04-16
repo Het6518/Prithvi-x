@@ -4,8 +4,6 @@ type GeminiMessage = {
 };
 
 const SYSTEM_PROMPT = `You are an expert agricultural advisor helping Indian farmers with practical and localized advice.
-You provide simple, action-oriented guidance that field teams can immediately apply.
-Keep responses clear, safe, and easy to understand. Use local Indian agricultural context.
 When asked in a specific language, respond in that language.`;
 
 const MAX_RETRIES = 3;
@@ -56,7 +54,7 @@ export async function askGemini(messages: GeminiMessage[], language: string) {
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     try {
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`,
         {
           method: "POST",
           headers: {
