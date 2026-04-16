@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { BarChart3, Boxes, CreditCard, Home, LogOut, Map, MessageSquareText, Users } from "lucide-react";
+import { BarChart3, Boxes, CreditCard, Home, Map, MessageSquareText, Users } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
-import { Button } from "@/components/shared/button";
+import { LogoutButton } from "@/components/shared/logout-button";
 
 const navItems = [
   { href: "/dashboard", label: "Overview", icon: Home },
@@ -48,13 +48,7 @@ export async function DashboardShell({ children }: { children: React.ReactNode }
             <p className="text-sm text-background/65">
               {user?.role || "DEALER"} | {(user as { sub?: string } | null)?.sub || "demo-user"}
             </p>
-            <form action="/api/auth/logout" method="post">
-              <Button variant="secondary" className="mt-5 w-full border-white/10 bg-white/10 text-background hover:bg-white/15">
-                <span className="inline-flex items-center gap-2">
-                  <LogOut className="h-4 w-4" /> Logout
-                </span>
-              </Button>
-            </form>
+            <LogoutButton />
           </div>
         </aside>
         <div className="space-y-6">

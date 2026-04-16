@@ -27,7 +27,9 @@ const config: Config = {
       animation: {
         float: "float 8s ease-in-out infinite",
         pulseSlow: "pulseSlow 3.6s ease-in-out infinite",
-        marquee: "marquee 28s linear infinite"
+        marquee: "marquee 28s linear infinite",
+        shimmer: "shimmer 2.4s ease-in-out infinite",
+        fadeInUp: "fadeInUp 0.6s ease-out forwards"
       },
       keyframes: {
         float: {
@@ -41,6 +43,14 @@ const config: Config = {
         marquee: {
           "0%": { transform: "translateX(0%)" },
           "100%": { transform: "translateX(-50%)" }
+        },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" }
+        },
+        fadeInUp: {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" }
         }
       }
     }

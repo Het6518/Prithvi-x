@@ -70,14 +70,14 @@ function SplashScreen() {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const seen = window.sessionStorage.getItem("prithvix-splash");
+    const seen = window.localStorage.getItem("prithvix-splash");
     if (seen) {
       setVisible(false);
       return;
     }
 
     const timer = window.setTimeout(() => {
-      window.sessionStorage.setItem("prithvix-splash", "1");
+      window.localStorage.setItem("prithvix-splash", "1");
       setVisible(false);
     }, 2600);
 
@@ -93,8 +93,40 @@ function SplashScreen() {
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(212,168,83,0.16),transparent_16%),radial-gradient(circle_at_80%_10%,rgba(38,97,71,0.38),transparent_22%),linear-gradient(180deg,rgba(14,26,20,1),rgba(17,37,28,1))]" />
           <div className="absolute inset-0 opacity-40 [background-image:radial-gradient(circle,rgba(255,255,255,0.22)_1px,transparent_1px)] [background-size:24px_24px]" />
-          <div className="relative z-10 w-full max-w-xl px-6">
-            <LazyGlobe />
+
+          {/* Atmospheric glow rings */}
+          <motion.div
+            className="absolute h-[420px] w-[420px] rounded-full border border-gold/10 sm:h-[520px] sm:w-[520px]"
+            initial={{ opacity: 0, scale: 0.6 }}
+            animate={{ opacity: 0.3, scale: 1.1 }}
+            transition={{ duration: 2.5, ease: "easeOut" }}
+          />
+          <motion.div
+            className="absolute h-[520px] w-[520px] rounded-full border border-white/5 sm:h-[640px] sm:w-[640px]"
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 0.15, scale: 1.2 }}
+            transition={{ duration: 3, ease: "easeOut" }}
+          />
+
+          <div className="relative z-10 flex w-full max-w-xl flex-col items-center px-6">
+            {/* Earth Image with zoom + rotation */}
+            <motion.div
+              className="relative h-[280px] w-[280px] overflow-hidden rounded-full shadow-[0_0_80px_rgba(212,168,83,0.2),0_0_160px_rgba(26,60,43,0.3)] sm:h-[340px] sm:w-[340px]"
+              initial={{ opacity: 0, scale: 0.7, rotate: -8 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <motion.img
+                src="/earth.png"
+                alt="Planet Earth from space"
+                className="h-full w-full object-cover"
+                animate={{ scale: [1, 1.06, 1], rotate: [0, 3, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              />
+              {/* Atmospheric edge glow */}
+              <div className="absolute inset-0 rounded-full shadow-[inset_0_0_60px_rgba(212,168,83,0.15),inset_0_0_120px_rgba(26,60,43,0.2)]" />
+            </motion.div>
+
             <motion.div
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
@@ -105,10 +137,10 @@ function SplashScreen() {
               <h1 className="mt-4 font-heading text-5xl text-background sm:text-6xl">Rooted In Growth</h1>
               <button
                 onClick={() => {
-                  window.sessionStorage.setItem("prithvix-splash", "1");
+                  window.localStorage.setItem("prithvix-splash", "1");
                   setVisible(false);
                 }}
-                className="mt-6 rounded-full border border-white/15 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur"
+                className="mt-6 rounded-full border border-white/15 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur transition-all duration-300 hover:scale-105 hover:bg-white/20"
               >
                 Enter Experience
               </button>
@@ -250,6 +282,32 @@ export function MarketingPage() {
       <section className="relative min-h-screen overflow-hidden">
         <div className="absolute inset-0 bg-grain" />
         <div className="absolute inset-0 opacity-30 [background-image:radial-gradient(circle,rgba(26,60,43,0.14)_1px,transparent_1px)] [background-size:28px_28px]" />
+        {/* Enhanced gradient overlay */}
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(212,168,83,0.06)_0%,transparent_40%,rgba(26,60,43,0.08)_100%)]" />
+
+        {/* Floating particles */}
+        {[...Array(5)].map((_, i) => (
+          <motion.div
+            key={`particle-${i}`}
+            className="absolute h-1.5 w-1.5 rounded-full bg-gold/30"
+            style={{
+              left: `${15 + i * 18}%`,
+              top: `${20 + (i % 3) * 25}%`
+            }}
+            animate={{
+              y: [0, -30, 0],
+              opacity: [0.2, 0.6, 0.2],
+              scale: [1, 1.4, 1]
+            }}
+            transition={{
+              duration: 4 + i * 0.8,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.5
+            }}
+          />
+        ))}
+
         <div className="section-shell relative grid min-h-screen items-center gap-10 py-20 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="max-w-2xl">
             <motion.p
@@ -284,7 +342,7 @@ export function MarketingPage() {
             >
               <Link
                 href="/login"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-forest px-6 py-3 text-sm font-semibold text-background shadow-ambient transition hover:bg-moss"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-forest px-6 py-3 text-sm font-semibold text-background shadow-ambient transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.03] hover:bg-moss active:scale-[0.97]"
               >
                 Request Demo <ArrowRight className="h-4 w-4" />
               </Link>
@@ -294,13 +352,18 @@ export function MarketingPage() {
                 </span>
               </Button>
             </motion.div>
-            <div className="mt-12 flex flex-wrap gap-3">
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.32, duration: 0.9 }}
+              className="mt-12 flex flex-wrap gap-3"
+            >
               {["Dealer-ready ERP", "Field-first workflows", "AI agronomy guidance"].map((item) => (
-                <div key={item} className="rounded-full border border-forest/10 bg-white/70 px-4 py-2 text-sm font-medium text-forest shadow-sm">
+                <div key={item} className="rounded-full border border-forest/10 bg-white/70 px-4 py-2 text-sm font-medium text-forest shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
                   {item}
                 </div>
               ))}
-            </div>
+            </motion.div>
           </div>
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}

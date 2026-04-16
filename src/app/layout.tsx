@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import "@/styles/globals.css";
+import { GoogleTranslate } from "@/components/shared/google-translate";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -23,7 +24,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${playfair.variable} ${jakarta.variable}`}>
-      <body>{children}</body>
+      <body>
+        <GoogleTranslate />
+        {children}
+      </body>
     </html>
   );
 }
