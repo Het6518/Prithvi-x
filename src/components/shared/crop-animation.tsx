@@ -19,7 +19,7 @@ export function CropAnimation() {
   }));
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 pointer-events-none z-[-1] overflow-hidden h-40 opacity-[0.15] flex items-end justify-between px-10">
+    <div className="fixed bottom-0 left-0 right-0 pointer-events-none z-40 overflow-hidden h-40 opacity-30 flex items-end justify-between px-10">
       {crops.map((crop) => (
         <div
           key={crop.id}
