@@ -76,76 +76,70 @@ function SplashScreen() {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden"
-      style={{ backgroundColor: "#0E1A14" }}
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden bg-[#050505]"
     >
-      {/* Subtle dot grid */}
-      <div className="absolute inset-0 opacity-20" style={{
-        backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1px)",
-        backgroundSize: "28px 28px"
+      {/* Starry background layers (dark sky) */}
+      <div className="absolute inset-0 opacity-60" style={{
+        backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
+        backgroundSize: "60px 60px",
+        backgroundPosition: "0 0"
+      }} />
+      <div className="absolute inset-0 opacity-40" style={{
+        backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.6) 1.5px, transparent 1.5px)",
+        backgroundSize: "100px 100px",
+        backgroundPosition: "30px 40px"
       }} />
 
-      {/* Atmospheric glow rings */}
+      {/* Full screen Earth Image */}
       <motion.div
-        className="absolute rounded-full"
-        style={{ width: 520, height: 520, border: "2px solid rgba(212,168,83,0.15)" }}
-        initial={{ opacity: 0, scale: 0.6 }}
-        animate={{ opacity: 0.4, scale: 1.1 }}
+        className="absolute inset-0 z-0"
+        initial={{ opacity: 0, scale: 1.1 }}
+        animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 4, ease: "easeOut" }}
-      />
-      <motion.div
-        className="absolute rounded-full"
-        style={{ width: 680, height: 680, border: "1px solid rgba(255,255,255,0.06)" }}
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 0.2, scale: 1.3 }}
-        transition={{ duration: 4.5, ease: "easeOut" }}
-      />
+      >
+        <motion.img
+          src="/earth.png"
+          alt="Planet Earth from space"
+          className="h-full w-full object-cover opacity-60"
+          animate={{ scale: [1, 1.05, 1] }}
+          transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
+        />
+        {/* Atmospheric gradients to ensure text visibility and deep contrast */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-transparent" />
+        {/* Subtle radial shadow to frame the center */}
+        <div className="absolute inset-0" style={{
+          background: "radial-gradient(circle at center, transparent 0%, rgba(5,5,5,0.7) 100%)"
+        }} />
+      </motion.div>
 
-      <div className="relative z-10 flex w-full max-w-xl flex-col items-center px-6">
-        {/* Earth Image — scale: 0.6→1.2, rotate: -10deg→+10deg, gold glow */}
+      {/* Overlay Text & Button */}
+      <div className="relative z-10 flex w-full max-w-4xl flex-col items-center justify-center px-6 text-center">
         <motion.div
-          className="relative overflow-hidden"
-          style={{
-            width: 320,
-            height: 320,
-            borderRadius: "50%",
-            boxShadow: "0 0 60px rgba(212,168,83,0.35), 0 0 120px rgba(212,168,83,0.15), 0 0 200px rgba(26,60,43,0.3)"
-          }}
-          initial={{ opacity: 0, scale: 0.6, rotate: -10 }}
-          animate={{ opacity: 1, scale: 1.2, rotate: 10 }}
-          transition={{ duration: 5, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <motion.img
-            src="/earth.png"
-            alt="Planet Earth from space"
-            className="h-full w-full object-cover"
-            animate={{ scale: [1, 1.08, 1], rotate: [0, 4, 0] }}
-            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-          />
-          {/* Gold atmosphere glow */}
-          <div className="absolute inset-0 rounded-full" style={{
-            boxShadow: "inset 0 0 80px rgba(212,168,83,0.2), inset 0 0 140px rgba(26,60,43,0.25)"
-          }} />
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 1 }}
-          className="mt-10 text-center"
+          transition={{ delay: 0.8, duration: 1.2, ease: "easeOut" }}
+          className="flex flex-col items-center"
         >
-          <p className="text-xs font-bold uppercase tracking-[0.6em]" style={{ color: "#D4A853" }}>
+          <p className="text-sm font-bold uppercase tracking-[0.8em] drop-shadow-md" style={{ color: "#D4A853" }}>
             Prithvix
           </p>
-          <h1 className="mt-4 font-heading text-5xl sm:text-6xl" style={{ color: "#F5F0E8" }}>
+          <h1 className="mt-6 font-heading text-5xl sm:text-7xl lg:text-8xl drop-shadow-2xl" style={{ color: "#F5F0E8" }}>
             Rooted In Growth
           </h1>
+          <p className="mt-6 font-medium text-white/70 max-w-2xl text-base sm:text-lg drop-shadow-lg leading-relaxed">
+            Leading the future of agrarian networks. Step into a world where premium tools meet foundational growth.
+          </p>
+          
           <button
             onClick={() => setVisible(false)}
-            className="mt-8 border-3 border-white/20 bg-white/10 px-8 py-3 text-sm font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-white/20 hover:border-white/40"
-            style={{ borderRadius: "6px" }}
+            className="mt-12 group relative inline-flex items-center justify-center border-2 border-white/20 bg-black/40 px-10 py-4 text-sm font-bold uppercase tracking-widest text-white backdrop-blur-md transition-all duration-500 hover:bg-white/10 hover:border-white/60 hover:scale-105"
+            style={{ borderRadius: "4px" }}
           >
             Enter Experience
+            <div className="absolute inset-0 -z-10 rounded-sm opacity-0 transition-opacity duration-500 group-hover:opacity-100" style={{
+              boxShadow: "0 0 20px rgba(255,255,255,0.15)"
+            }} />
           </button>
         </motion.div>
       </div>
