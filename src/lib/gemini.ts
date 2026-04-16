@@ -65,7 +65,7 @@ export async function askGemini(messages: GeminiMessage[], language: string) {
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
-    return getFallbackResponse(language);
+    throw new Error("Gemini API Key is missing. Please configure it in the .env file.");
   }
 
   // Enforce server-side rate limit: max 1 request per 2 seconds
@@ -107,20 +107,34 @@ export async function askGemini(messages: GeminiMessage[], language: string) {
       if (response.status === 429) {
         const delay = BASE_DELAY_MS * Math.pow(2, attempt);
         console.warn(`[Gemini] Rate limited (429). Retry ${attempt + 1}/${MAX_RETRIES} after ${delay}ms...`);
-        lastError = new Error("The AI advisor is busy. Please wait a moment and try again.");
+        lastError = new Error("Model quota limit reached or API rate limited. Please wait a moment and try again.");
         await sleep(delay);
         continue;
       }
 
       if (response.status === 403) {
         console.error("[Gemini] API key invalid or quota exhausted (403).");
-        return getFallbackResponse(language);
+        throw new Error("Model quota limit reached or API key invalid.");
       }
 
       if (!response.ok) {
-        const errorBody = await response.text().catch(() => "Unknown error");
-        console.error("[Gemini] API error:", response.status, errorBody);
-        throw new Error("Unable to reach AI advisor. Please try again shortly.");
+        let apiErrorMsg = "";
+        try {
+          const bodyData = await response.json();
+          apiErrorMsg = bodyData?.error?.message || "";
+        } catch {
+          apiErrorMsg = await response.text().catch(() => "Unknown error content");
+        }
+
+        let customError = "Unable to reach AI advisor. Please try again shortly.";
+        if (response.status === 400 && apiErrorMsg.toLowerCase().includes("token")) {
+          customError = `Input token limit reached: ${apiErrorMsg}`;
+        } else if (apiErrorMsg) {
+          customError = `AI Error (${response.status}): ${apiErrorMsg}`;
+        }
+        
+        console.error("[Gemini] API error:", response.status, apiErrorMsg);
+        throw new Error(customError);
       }
 
       const data = await response.json();
@@ -133,7 +147,7 @@ export async function askGemini(messages: GeminiMessage[], language: string) {
 
       if (!text) {
         console.error("[Gemini] Empty response:", JSON.stringify(data));
-        return "I apologize, I could not generate a response at this time. Please try rephrasing your question.";
+        throw new Error("Received an empty response from the AI. Please try rephrasing your question.");
       }
 
       return text;
@@ -150,7 +164,7 @@ export async function askGemini(messages: GeminiMessage[], language: string) {
     }
   }
 
-  // All retries exhausted — return a helpful fallback instead of crashing
-  console.warn("[Gemini] All retries exhausted. Returning fallback response.");
-  return getFallbackResponse(language);
+  // All retries exhausted — throw error instead of fallback to notify user
+  console.warn("[Gemini] All retries exhausted.");
+  throw lastError || new Error("Failed to reach the AI advisor after multiple attempts. Please try again.");
 }
