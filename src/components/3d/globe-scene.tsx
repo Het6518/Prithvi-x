@@ -2,7 +2,7 @@
 
 import { useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, OrbitControls, Sphere, Stars, Text } from "@react-three/drei";
+import { Float, OrbitControls, Sphere, Stars } from "@react-three/drei";
 import * as THREE from "three";
 
 function GlobeMesh() {
@@ -37,17 +37,6 @@ function GlobeMesh() {
           emissiveIntensity={0.48}
         />
       </Sphere>
-      
-      {/* Firmly planted on the surface so it rotates with the globe */}
-      <Text
-        position={[0, 0, 1.34]}
-        fontSize={0.36}
-        color="#D4A853"
-        letterSpacing={0.2}
-        font="https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2"
-      >
-        PRITHVIX
-      </Text>
 
       {points.map((point, index) => (
         <mesh key={index} position={point}>
