@@ -3,6 +3,7 @@ import { z } from "zod";
 import { jsonError, jsonOk } from "@/lib/api";
 import { requireRequestUser } from "@/lib/auth";
 import { createFarmer, listFarmers } from "@/lib/dashboard-data";
+import { geocodeVillage } from "@/lib/geocode";
 
 const createFarmerSchema = z.object({
   name: z.string().min(2),
@@ -36,7 +37,18 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    await createFarmer(parsed.data);
+    const data = { ...parsed.data };
+
+    // Auto-geocode if no lat/lng provided
+    if (!data.latitude || !data.longitude) {
+      const coords = await geocodeVillage(data.village);
+      if (coords) {
+        data.latitude = coords.lat;
+        data.longitude = coords.lng;
+      }
+    }
+
+    await createFarmer(data);
     const farmers = await listFarmers();
     return jsonOk({ farmers }, { status: 201 });
   } catch (error) {

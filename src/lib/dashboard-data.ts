@@ -9,6 +9,7 @@ import {
   fallbackVisits
 } from "@/data/mock";
 import { isPlaceholderEnv } from "@/lib/api";
+import { geocodeVillage } from "@/lib/geocode";
 import { prisma } from "@/lib/prisma";
 import type {
   ActivityItem,
@@ -190,23 +191,18 @@ function buildAnalyticsFromFarmers(farmers: FarmerRecord[], payments: PaymentRec
   };
 }
 
-function geocodeFarmer(farmer: FarmerRecord): { lat: number; lng: number } | null {
+async function geocodeFarmerAsync(farmer: FarmerRecord): Promise<{ lat: number; lng: number } | null> {
   if (farmer.latitude && farmer.longitude) {
     return { lat: farmer.latitude, lng: farmer.longitude };
   }
-  // Try geocoding by village name
-  const key = farmer.village.toLowerCase().trim();
-  const coords = cityGeocodeLookup[key];
-  if (coords) {
-    return coords;
-  }
-  return null;
+  // Try static lookup first, then Nominatim API
+  return geocodeVillage(farmer.village);
 }
 
-function buildMapPoints(farmers: FarmerRecord[]): MapPoint[] {
-  return farmers
-    .map((farmer) => {
-      const coords = geocodeFarmer(farmer);
+async function buildMapPoints(farmers: FarmerRecord[]): Promise<MapPoint[]> {
+  const results = await Promise.all(
+    farmers.map(async (farmer) => {
+      const coords = await geocodeFarmerAsync(farmer);
       if (!coords) return null;
       return {
         id: farmer.id,
@@ -218,7 +214,8 @@ function buildMapPoints(farmers: FarmerRecord[]): MapPoint[] {
         farmers: 1
       };
     })
-    .filter((point): point is MapPoint => point !== null);
+  );
+  return results.filter((point): point is MapPoint => point !== null);
 }
 
 function toChatSessionRecord(
@@ -501,6 +498,8 @@ export async function updateFarmer(
     loyaltyTier: FarmerRecord["loyaltyTier"];
     totalVisits: number;
     outstandingAmount: number;
+    latitude: number;
+    longitude: number;
   }>
 ) {
   if (!canUseDatabase()) {
