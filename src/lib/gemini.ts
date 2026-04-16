@@ -1,5 +1,5 @@
 type GeminiMessage = {
-  role: "user" | "model";
+  role: "user" | "assistant";
   content: string;
 };
 
@@ -69,15 +69,16 @@ export async function askGemini(messages: GeminiMessage[], language: string) {
       const timeout = setTimeout(() => controller.abort(), 15000); // 15s timeout
 
       const response = await fetch(
-        // Change this in your fetch URL
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            system: `${SYSTEM_PROMPT}\n\nRespond in: ${language}`,
+            systemInstruction: {
+              parts: [{ text: `${SYSTEM_PROMPT}\n\nRespond in: ${language}` }]
+            },
             contents: messages.map((message) => ({
               role: message.role === "user" ? "user" : "model",
               parts: [{ text: message.content }]
