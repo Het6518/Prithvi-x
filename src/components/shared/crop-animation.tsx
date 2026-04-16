@@ -23,9 +23,9 @@ export function CropAnimation() {
   }));
 
   return (
-    // Fixed container ensures it stays attached to the bottom of the viewport
-    // z-50 keeps it above other content, pointer-events-none ensures it doesn't block clicks
-    <div className="fixed bottom-[-4px] left-0 right-0 pointer-events-none z-50 flex items-end justify-between overflow-hidden px-4 sm:px-12 h-32 opacity-95">
+    // Absolute container ensures it stays attached to the bottom of the page content rather than the screen
+    // z-10 keeps it safely behind core interactive elements if any overlap occurs
+    <div className="absolute bottom-[-4px] left-0 right-0 pointer-events-none z-10 flex items-end justify-between overflow-hidden px-4 sm:px-12 h-32 opacity-95">
       {crops.map((crop) => (
         <div
           key={crop.id}

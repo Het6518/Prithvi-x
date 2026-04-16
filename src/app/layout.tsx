@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${playfair.variable} ${jakarta.variable}`}>
-      <body>
+      <body className="relative min-h-[100dvh] pb-[130px]">
         <GoogleTranslate />
         <CropAnimation />
         {children}
