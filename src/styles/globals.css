@@ -243,6 +243,32 @@
     transform-origin: left center;
     animation: swayLeafRight 3.5s ease-in-out infinite alternate;
   }
+  .crop-flower {
+    @apply absolute block bg-gold border-2 border-black;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 
+      0 -8px 0 -4px theme('colors.gold'),
+      8px 0 0 -4px theme('colors.gold'),
+      0 8px 0 -4px theme('colors.gold'),
+      -8px 0 0 -4px theme('colors.gold'),
+      6px -6px 0 -4px theme('colors.gold'),
+      6px 6px 0 -4px theme('colors.gold'),
+      -6px 6px 0 -4px theme('colors.gold'),
+      -6px -6px 0 -4px theme('colors.gold');
+  }
+  .crop-flower-center {
+    @apply absolute bg-ink rounded-full;
+    width: 10px;
+    height: 10px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 }
 
 @keyframes growCrop {

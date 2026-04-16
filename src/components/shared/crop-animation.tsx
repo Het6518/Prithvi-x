@@ -19,7 +19,7 @@ export function CropAnimation() {
   }));
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 pointer-events-none z-40 overflow-hidden h-40 opacity-30 flex items-end justify-between px-10">
+    <div className="fixed bottom-0 left-0 right-0 pointer-events-none z-40 overflow-hidden h-40 opacity-75 flex items-end justify-between px-10">
       {crops.map((crop) => (
         <div
           key={crop.id}
@@ -38,6 +38,9 @@ export function CropAnimation() {
             className="crop-leaf-right" 
             style={{ animationDelay: `${crop.delay + 0.2}s` }} 
           />
+          <div className="crop-flower">
+            <div className="crop-flower-center" />
+          </div>
         </div>
       ))}
     </div>
