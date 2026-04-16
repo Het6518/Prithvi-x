@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 
+// You can customize the colorful emojis here!
+const FLOWERS = ["🌷", "🌻", "🌺", "🌷", "🌾", "🌼", "🌷", "🌸"];
+
 export function CropAnimation() {
   const [mounted, setMounted] = useState(false);
 
@@ -11,36 +14,31 @@ export function CropAnimation() {
 
   if (!mounted) return null;
 
-  // Generate a random-looking but static array of crops so it doesn't cause hydration errors
-  const crops = Array.from({ length: 15 }).map((_, i) => ({
+  // Generate a random-looking but static array of colorful flowers
+  const crops = Array.from({ length: 24 }).map((_, i) => ({
     id: i,
+    emoji: FLOWERS[i % FLOWERS.length],
     delay: (i * 0.3) % 2,
-    baseHeight: 30 + (i * 17) % 50,
+    size: 28 + (i * 11) % 16, // Font sizes from 28px to 44px
   }));
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 pointer-events-none z-40 overflow-hidden h-40 opacity-75 flex items-end justify-between px-10">
+    // Fixed container ensures it stays attached to the bottom of the viewport
+    // z-50 keeps it above other content, pointer-events-none ensures it doesn't block clicks
+    <div className="fixed bottom-[-4px] left-0 right-0 pointer-events-none z-50 flex items-end justify-between overflow-hidden px-4 sm:px-12 h-32 opacity-95">
       {crops.map((crop) => (
         <div
           key={crop.id}
-          className="crop-stalk"
+          className="animate-sway origin-bottom"
           style={{
-            height: `${crop.baseHeight}px`,
+            fontSize: `${crop.size}px`,
+            lineHeight: 1,
             animationDelay: `${crop.delay}s`,
             animationDuration: `${3 + crop.delay}s`,
+            filter: "drop-shadow(0px 2px 2px rgba(0,0,0,0.3))",
           }}
         >
-          <div 
-            className="crop-leaf-left" 
-            style={{ animationDelay: `${crop.delay + 0.5}s` }} 
-          />
-          <div 
-            className="crop-leaf-right" 
-            style={{ animationDelay: `${crop.delay + 0.2}s` }} 
-          />
-          <div className="crop-flower">
-            <div className="crop-flower-center" />
-          </div>
+          {crop.emoji}
         </div>
       ))}
     </div>
