@@ -107,19 +107,19 @@ function SplashScreen() {
           animate={{ scale: [1, 1.05, 1] }}
           transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
         />
-        
+
         {/* Adds a gentle blue wash over the earth */}
         <div className="absolute inset-0 bg-blue-500/10 mix-blend-overlay" />
 
         {/* Atmospheric gradients to ensure text visibility and deep contrast */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#081525] via-[#081525]/60 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-b from-[#081525] via-transparent to-transparent" />
-        
+
         {/* Bright light blue radial glow behind the center */}
         <div className="absolute inset-0" style={{
-          background: "radial-gradient(circle at center, rgba(14,165,233,0.15) 0%, transparent 60%)"
+          background: "radial-gradient(circle at center, rgba(0, 128, 187, 0.9) 0%, transparent 60%)"
         }} />
-        
+
         {/* Subtle radial shadow to frame the center */}
         <div className="absolute inset-0" style={{
           background: "radial-gradient(circle at center, transparent 0%, rgba(8,21,37,0.8) 100%)"
@@ -143,7 +143,7 @@ function SplashScreen() {
           <p className="mt-6 font-medium text-white/70 max-w-2xl text-base sm:text-lg drop-shadow-lg leading-relaxed">
             Leading the future of agrarian networks. Step into a world where premium tools meet foundational growth.
           </p>
-          
+
           <button
             onClick={() => setVisible(false)}
             className="mt-12 group relative inline-flex items-center justify-center border-2 border-white/20 bg-black/40 px-10 py-4 text-sm font-bold uppercase tracking-widest text-white backdrop-blur-md transition-all duration-500 hover:bg-white/10 hover:border-white/60 hover:scale-105"
