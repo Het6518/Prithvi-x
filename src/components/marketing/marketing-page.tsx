@@ -70,107 +70,92 @@ const pricing = [
    PART 1 — CINEMATIC SPLASH SCREEN (4-5s, Earth animation)
    ============================================================ */
 function SplashScreen() {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return !window.localStorage.getItem("prithvix-splash");
+  });
 
-  useEffect(() => {
-    const seen = window.localStorage.getItem("prithvix-splash");
-    if (seen) {
-      setVisible(false);
-      return;
-    }
-
-    const timer = window.setTimeout(() => {
-      window.localStorage.setItem("prithvix-splash", "1");
-      setVisible(false);
-    }, 4800);
-
-    return () => window.clearTimeout(timer);
-  }, []);
+  if (!visible) return null;
 
   return (
-    <AnimatePresence>
-      {visible ? (
+    <div
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden"
+      style={{ backgroundColor: "#0E1A14" }}
+    >
+      {/* Subtle dot grid */}
+      <div className="absolute inset-0 opacity-20" style={{
+        backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1px)",
+        backgroundSize: "28px 28px"
+      }} />
+
+      {/* Atmospheric glow rings */}
+      <motion.div
+        className="absolute rounded-full"
+        style={{ width: 520, height: 520, border: "2px solid rgba(212,168,83,0.15)" }}
+        initial={{ opacity: 0, scale: 0.6 }}
+        animate={{ opacity: 0.4, scale: 1.1 }}
+        transition={{ duration: 4, ease: "easeOut" }}
+      />
+      <motion.div
+        className="absolute rounded-full"
+        style={{ width: 680, height: 680, border: "1px solid rgba(255,255,255,0.06)" }}
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 0.2, scale: 1.3 }}
+        transition={{ duration: 4.5, ease: "easeOut" }}
+      />
+
+      <div className="relative z-10 flex w-full max-w-xl flex-col items-center px-6">
+        {/* Earth Image — scale: 0.6→1.2, rotate: -10deg→+10deg, gold glow */}
         <motion.div
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden"
-          style={{ backgroundColor: "#0E1A14" }}
-          exit={{ opacity: 0, transition: { duration: 1.2, ease: "easeInOut" } }}
+          className="relative overflow-hidden"
+          style={{
+            width: 320,
+            height: 320,
+            borderRadius: "50%",
+            boxShadow: "0 0 60px rgba(212,168,83,0.35), 0 0 120px rgba(212,168,83,0.15), 0 0 200px rgba(26,60,43,0.3)"
+          }}
+          initial={{ opacity: 0, scale: 0.6, rotate: -10 }}
+          animate={{ opacity: 1, scale: 1.2, rotate: 10 }}
+          transition={{ duration: 5, ease: [0.16, 1, 0.3, 1] }}
         >
-          {/* Subtle dot grid */}
-          <div className="absolute inset-0 opacity-20" style={{
-            backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1px)",
-            backgroundSize: "28px 28px"
+          <motion.img
+            src="/earth.png"
+            alt="Planet Earth from space"
+            className="h-full w-full object-cover"
+            animate={{ scale: [1, 1.08, 1], rotate: [0, 4, 0] }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+          />
+          {/* Gold atmosphere glow */}
+          <div className="absolute inset-0 rounded-full" style={{
+            boxShadow: "inset 0 0 80px rgba(212,168,83,0.2), inset 0 0 140px rgba(26,60,43,0.25)"
           }} />
-
-          {/* Atmospheric glow rings */}
-          <motion.div
-            className="absolute rounded-full"
-            style={{ width: 520, height: 520, border: "2px solid rgba(212,168,83,0.15)" }}
-            initial={{ opacity: 0, scale: 0.6 }}
-            animate={{ opacity: 0.4, scale: 1.1 }}
-            transition={{ duration: 4, ease: "easeOut" }}
-          />
-          <motion.div
-            className="absolute rounded-full"
-            style={{ width: 680, height: 680, border: "1px solid rgba(255,255,255,0.06)" }}
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 0.2, scale: 1.3 }}
-            transition={{ duration: 4.5, ease: "easeOut" }}
-          />
-
-          <div className="relative z-10 flex w-full max-w-xl flex-col items-center px-6">
-            {/* Earth Image — scale: 0.6→1.2, rotate: -10deg→+10deg, gold glow */}
-            <motion.div
-              className="relative overflow-hidden"
-              style={{
-                width: 320,
-                height: 320,
-                borderRadius: "50%",
-                boxShadow: "0 0 60px rgba(212,168,83,0.35), 0 0 120px rgba(212,168,83,0.15), 0 0 200px rgba(26,60,43,0.3)"
-              }}
-              initial={{ opacity: 0, scale: 0.6, rotate: -10 }}
-              animate={{ opacity: 1, scale: 1.2, rotate: 10 }}
-              transition={{ duration: 5, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <motion.img
-                src="/earth.png"
-                alt="Planet Earth from space"
-                className="h-full w-full object-cover"
-                animate={{ scale: [1, 1.08, 1], rotate: [0, 4, 0] }}
-                transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-              />
-              {/* Gold atmosphere glow */}
-              <div className="absolute inset-0 rounded-full" style={{
-                boxShadow: "inset 0 0 80px rgba(212,168,83,0.2), inset 0 0 140px rgba(26,60,43,0.25)"
-              }} />
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 1 }}
-              className="mt-10 text-center"
-            >
-              <p className="text-xs font-bold uppercase tracking-[0.6em]" style={{ color: "#D4A853" }}>
-                Prithvix
-              </p>
-              <h1 className="mt-4 font-heading text-5xl sm:text-6xl" style={{ color: "#F5F0E8" }}>
-                Rooted In Growth
-              </h1>
-              <button
-                onClick={() => {
-                  window.localStorage.setItem("prithvix-splash", "1");
-                  setVisible(false);
-                }}
-                className="mt-8 border-3 border-white/20 bg-white/10 px-8 py-3 text-sm font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-white/20 hover:border-white/40"
-                style={{ borderRadius: "6px" }}
-              >
-                Enter Experience
-              </button>
-            </motion.div>
-          </div>
         </motion.div>
-      ) : null}
-    </AnimatePresence>
+
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 1 }}
+          className="mt-10 text-center"
+        >
+          <p className="text-xs font-bold uppercase tracking-[0.6em]" style={{ color: "#D4A853" }}>
+            Prithvix
+          </p>
+          <h1 className="mt-4 font-heading text-5xl sm:text-6xl" style={{ color: "#F5F0E8" }}>
+            Rooted In Growth
+          </h1>
+          <button
+            onClick={() => {
+              window.localStorage.setItem("prithvix-splash", "1");
+              setVisible(false);
+            }}
+            className="mt-8 border-3 border-white/20 bg-white/10 px-8 py-3 text-sm font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-white/20 hover:border-white/40"
+            style={{ borderRadius: "6px" }}
+          >
+            Enter Experience
+          </button>
+        </motion.div>
+      </div>
+    </div>
   );
 }
 
