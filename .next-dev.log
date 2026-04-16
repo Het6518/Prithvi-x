@@ -1,0 +1,34 @@
+
+> prithvix@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.5.15
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.56.1:3000
+   - Experiments (use with caution):
+     · optimizePackageImports
+
+ ✓ Starting...
+ ✓ Ready in 3.7s
+ ○ Compiling /login ...
+ ✓ Compiled / in 40.8s (2417 modules)
+ GET / 200 in 39997ms
+ GET / 200 in 1643ms
+ GET /login 200 in 1481ms
+ GET / 200 in 1572ms
+ ✓ Compiled in 4.6s (2431 modules)
+ GET /login 200 in 1430ms
+ ○ Compiling /api/auth/login ...
+ ✓ Compiled /api/auth/login in 7.2s (2545 modules)
+ POST /api/auth/login 200 in 9669ms
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 3.8s (200 modules)
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 2.8s (2575 modules)
+ GET /dashboard 200 in 5131ms
+ GET /dashboard 200 in 206ms
+ ○ Compiling /api/auth/logout ...
+ ✓ Compiled /api/auth/logout in 1996ms (2577 modules)
+ POST /api/auth/logout 200 in 2685ms
+ GET /login?next=%2Fdashboard 200 in 8518ms
+ GET / 200 in 3889ms
