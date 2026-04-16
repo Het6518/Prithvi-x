@@ -37,6 +37,18 @@ function GlobeMesh() {
           emissiveIntensity={0.48}
         />
       </Sphere>
+      
+      {/* Firmly planted on the surface so it rotates with the globe */}
+      <Text
+        position={[0, 0, 1.34]}
+        fontSize={0.36}
+        color="#D4A853"
+        letterSpacing={0.2}
+        font="https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2"
+      >
+        PRITHVIX
+      </Text>
+
       {points.map((point, index) => (
         <mesh key={index} position={point}>
           <sphereGeometry args={[0.03, 16, 16]} />
@@ -44,34 +56,6 @@ function GlobeMesh() {
         </mesh>
       ))}
     </group>
-  );
-}
-
-function AlwaysVisibleText() {
-  const textRef = useRef<THREE.Mesh>(null);
-  
-  useFrame(({ camera }) => {
-    if (!textRef.current) return;
-    // Calculate direction from center (0,0,0) to camera
-    const dir = camera.position.clone().normalize();
-    // Position the text 1.4 units outward from the globe center toward the camera
-    textRef.current.position.copy(dir.multiplyScalar(1.4));
-    // Make the text face exactly the same way the camera is looking
-    textRef.current.quaternion.copy(camera.quaternion);
-  });
-
-  return (
-    <Text
-      ref={textRef as any}
-      fontSize={0.34}
-      color="#D4A853"
-      letterSpacing={0.2}
-      font="https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2"
-      outlineWidth={0.015}
-      outlineColor="#0E1A14"
-    >
-      PRITHVIX
-    </Text>
   );
 }
 
@@ -87,7 +71,6 @@ export function GlobeScene() {
           
           <Float speed={1.1} rotationIntensity={0.24} floatIntensity={0.4}>
             <GlobeMesh />
-            <AlwaysVisibleText />
           </Float>
           
           <OrbitControls enablePan={false} enableZoom={false} autoRotate autoRotateSpeed={0.45} />
