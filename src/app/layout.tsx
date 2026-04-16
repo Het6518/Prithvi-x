@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import "@/styles/globals.css";
 import { GoogleTranslate } from "@/components/shared/google-translate";
+import { CropAnimation } from "@/components/shared/crop-animation";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" className={`${playfair.variable} ${jakarta.variable}`}>
       <body>
         <GoogleTranslate />
+        <CropAnimation />
         {children}
       </body>
     </html>
