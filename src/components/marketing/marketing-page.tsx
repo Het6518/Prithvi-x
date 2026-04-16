@@ -341,7 +341,7 @@ export function MarketingPage() {
               >
                 Request Demo <ArrowRight className="h-4 w-4" />
               </Link>
-              <Button variant="secondary">
+              <Button variant="secondary" onClick={() => window.open("https://youtu.be/dPxlylURfm8", "_blank", "noopener,noreferrer")}>
                 <span className="inline-flex items-center gap-2">
                   <CirclePlay className="h-4 w-4" /> Watch How It Works
                 </span>
