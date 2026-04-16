@@ -79,7 +79,7 @@ export async function askGemini(messages: GeminiMessage[], language: string) {
       const timeout = setTimeout(() => controller.abort(), 15000); // 15s timeout
 
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
         {
           method: "POST",
           headers: {
