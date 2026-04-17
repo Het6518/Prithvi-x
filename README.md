@@ -11,7 +11,7 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-3ecf8e?style=flat-square&logo=supabase)](https://supabase.com/)
 [![Gemini AI](https://img.shields.io/badge/Gemini-AI%20Powered-4285F4?style=flat-square&logo=google)](https://ai.google.dev/)
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-000000?style=flat-square&logo=vercel)](https://vercel.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
+
 
 <br/>
 
@@ -116,7 +116,7 @@ This is not a prototype. This is a real product.
 | **Google Gemini API** | AI agronomist chatbot with multilingual support |
 | **JWT** | Stateless authentication and session management |
 | **Vercel** | Deployment, edge functions, and CI/CD pipeline |
-| **Supabase / Railway** | Managed PostgreSQL hosting |
+| **Supabase** | Managed PostgreSQL hosting |
 
 ---
 
